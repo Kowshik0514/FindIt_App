@@ -10,7 +10,7 @@ const Explore = () => {
     >
       <View style={styles.innerContainer}>
         <Text style={styles.text}>
-          fbdbbd
+          sffsf
         </Text>
       </View>
     </ScrollView>
