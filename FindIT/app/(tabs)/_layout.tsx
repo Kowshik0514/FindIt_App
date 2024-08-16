@@ -27,8 +27,8 @@ export default function TabLayout() {
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? 'home' : 'home-outline'}
+                size={focused ? 32 : 24}
                 color={color}
-                // style={focused ? styles.activeTab : {}}
               />
             ),
           }}
@@ -40,7 +40,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color, focused }) => (
               <MaterialCommunityIcons
               name={focused ? 'briefcase-search' : 'briefcase-search-outline'}
-                size={focused ? 28 : 24}
+                size={focused ? 32 : 24}
                 color={color}
                 // style={focused ? styles.activeTab : {}}
               />
@@ -52,10 +52,10 @@ export default function TabLayout() {
           options={{
             title: 'Lost',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? 'alert-circle' : 'alert-circle-outline'}
+              <MaterialCommunityIcons
+                name={focused ? 'map-marker-question' : 'map-marker-question-outline'}
                 color={color}
-                size={focused ? 28 : 24}
+                size={focused ? 32 : 24}
                 // style={focused ? styles.activeTab : {}}
               />
             ),
@@ -66,10 +66,10 @@ export default function TabLayout() {
           options={{
             title: 'Found',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? 'checkmark-circle' : 'checkmark-circle-outline'}
+              <MaterialCommunityIcons
+                name={focused ? 'store-search' : 'store-search-outline'}
                 color={color}
-                size={focused ? 28 : 24}
+                size={focused ? 32 : 24}
                 // style={focused ? styles.activeTab : {}}
               />
             ),
@@ -83,7 +83,7 @@ export default function TabLayout() {
               <TabBarIcon
                 name={focused ? 'person' : 'person-outline'}
                 color={color}
-                size={focused ? 28 : 24}
+                size={focused ? 32 : 24}
                 // style={focused ? styles.activeTab : {}}
               />
             ),
