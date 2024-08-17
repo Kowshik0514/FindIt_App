@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import Circles from './circles';
 
 const AuthLayout = () => {
   return (
@@ -26,6 +27,7 @@ const AuthLayout = () => {
                 }}
             />
         </Stack>
+        <Circles />
         <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />        
         {/* doubt */}
     </>
