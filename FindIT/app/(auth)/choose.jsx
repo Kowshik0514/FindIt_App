@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, Image, 
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -11,6 +12,12 @@ const Choose = () => {
   const opacity = new Animated.Value(1);
   const [buttonClicked, setButtonClicked] = useState(null);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setCurrentView(1); // Reset view to 1 when the component gains focus
+    }, [])
+  );
+  
   const handleSignInClick = () => {
     setButtonClicked('signin');
     handleNavigate(2); // Proceed to the next view
