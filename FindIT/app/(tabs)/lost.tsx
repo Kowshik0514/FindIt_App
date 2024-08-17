@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'rea
 import * as ImagePicker from 'expo-image-picker';
 
 import {  TextInput, Image, FlatList } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 // Adjust the import path as needed
 
 interface LostItem {
@@ -15,7 +16,9 @@ interface LostItem {
 const initialLostItems: LostItem[] = [
   { id: '1', description: 'Red Backpack', location: 'Food Court', contact: '123-456-7890' },
   { id: '2', description: 'Blue Water Bottle', location: 'Lecture Hall Complex', contact: '987-654-3210' },
-  // Add more items as needed
+  { id: '3', description: 'Black Umbrella', location: 'Indoor Stadium', contact: '555-555-5555' },
+  { id: '4', description: 'White Notebook', location: 'Library', contact: '111-222-3333' },
+  { id: '5', description: 'Gray Hoodie', location: 'Cafeteria', contact: '444-666-7777' },
 ];
 
 const App: React.FC = () => {
@@ -31,7 +34,10 @@ const App: React.FC = () => {
   };
 
   const addLostItem = (item: Omit<LostItem, 'id'>) => {
-    setLostItems((prevItems) => [...prevItems, { ...item, id: (prevItems.length + 1).toString() }]);
+    setLostItems((prevItems) => [
+      ...prevItems,
+      { ...item, id: (prevItems.length + 1).toString() },
+    ]);
   };
 
   return (
@@ -40,6 +46,7 @@ const App: React.FC = () => {
         <FlatList
           data={lostItems}
           keyExtractor={(item) => item.id}
+          numColumns={2}
           renderItem={({ item }) => (
             <View style={styles.lostItem}>
               <Text style={styles.lostItemText}>Description: {item.description}</Text>
@@ -82,6 +89,10 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
   const [query, setQuery] = useState<string>('');
   const [filteredLocations, setFilteredLocations] = useState<string[]>([]);
   const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [isSelectingEndDate, setIsSelectingEndDate] = useState<boolean>(false);
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -126,12 +137,15 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
     console.log('Location:', location);
     console.log('Contact:', contact);
     console.log('Photo URI:', photo);
+    console.log('Lost Date Range:', startDate, 'to', endDate);
 
     // Reset form fields
     setItemDescription('');
     setLocation('');
     setContact('');
     setPhoto(null);
+    setStartDate(undefined);
+    setEndDate(undefined);
 
     // Close the LostTab
     onClose();
@@ -143,8 +157,8 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleSubmit = () => {
-    if (!itemDescription || !contact || !photo) {
-      alert('Please fill out all fields and upload a photo.');
+    if (!itemDescription || !contact || !photo || !startDate || !endDate) {
+      alert('Please fill out all fields, upload a photo, and select a date range.');
       return;
     }
 
@@ -156,19 +170,37 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
     setLocation('');
     setContact('');
     setPhoto(null);
+    setStartDate(undefined);
+    setEndDate(undefined);
     onClose();
+  };
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      if (isSelectingEndDate) {
+        setEndDate(selectedDate);
+      } else {
+        setStartDate(selectedDate);
+        setIsSelectingEndDate(true); // Switch to end date after selecting start date
+      }
+    }
+  };
+
+  const openDatePicker = () => {
+    setShowDatePicker(true);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Report Lost Item</Text>
-      
+
       <TouchableOpacity onPress={pickImage} style={styles.uploadButton}>
         <Text style={styles.uploadText}>Upload Photo</Text>
       </TouchableOpacity>
-      
+
       {photo && <Image source={{ uri: photo }} style={styles.image} />}
-      
+
       <TextInput
         style={styles.input}
         placeholder="Item Description"
@@ -176,7 +208,7 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
         onChangeText={setItemDescription}
         placeholderTextColor="#6EACDA"
       />
-      
+
       <TextInput
         style={styles.input}
         placeholder="Enter location"
@@ -184,7 +216,7 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
         onChangeText={handleLocationChange}
         placeholderTextColor="#6EACDA"
       />
-      
+
       {filteredLocations.length > 0 && (
         <FlatList
           data={filteredLocations}
@@ -197,7 +229,7 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
           style={styles.suggestionsContainer}
         />
       )}
-      
+
       <TextInput
         style={styles.input}
         placeholder="Contact Information"
@@ -205,13 +237,32 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
         onChangeText={setContact}
         placeholderTextColor="#6EACDA"
       />
-      
+
+      <TouchableOpacity onPress={openDatePicker} style={styles.datePickerButton}>
+        <Text style={styles.datePickerText}>
+          {startDate && endDate
+            ? `From: ${startDate.toDateString()} To: ${endDate.toDateString()}`
+            : startDate
+            ? `Start Date: ${startDate.toDateString()}`
+            : 'Select Date Range'}
+        </Text>
+      </TouchableOpacity>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={isSelectingEndDate && startDate ? startDate : new Date()}
+          mode="date"
+          display="default"
+          onChange={onDateChange}
+        />
+      )}
+
       <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleReset} style={styles.fabMinus}>
-        <Text style={styles.fabText}>-</Text>
+      <TouchableOpacity onPress={handleReset} style={styles.cancelButton}>
+        <Text style={styles.cancelButtonText}>Cancel</Text>
       </TouchableOpacity>
 
       {/* Confirmation Modal */}
@@ -239,7 +290,32 @@ const LostTab = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
+
+
 const styles = StyleSheet.create({
+  datePickerButton: {
+    backgroundColor: '#3B5ED5',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 15,
+    width: '100%',
+    alignItems: 'center',
+  },
+  datePickerText: {
+    color: '#FFF',
+  },
+  cancelButton: {
+    backgroundColor: '#D53B3B',
+    padding: 8,
+    borderRadius: 5,
+    alignItems: 'center',
+    width: 65,
+    marginTop: 10,
+  },
+  cancelButtonText: {
+    color: '#FFF',
+    fontSize: 14,
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -311,6 +387,28 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 14,
   },
+  lostItemListContainer: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: 'white',
+  },
+  lostItemList: {
+    paddingVertical: 10,
+  },
+  lostItem: {
+    backgroundColor: '#03346E',
+    borderRadius: 5,
+    padding: 15,
+    margin: 5,
+    flex: 1,
+    maxWidth: '48%',
+    borderColor: '#6EACDA',
+    borderWidth: 1,
+  },
+  lostItemText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
   fab: {
     position: 'absolute',
     bottom: 20,
@@ -331,26 +429,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  lostItemListContainer: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: 'white',
-  },
-  lostItemList: {
-    paddingVertical: 10,
-  },
-  lostItem: {
-    backgroundColor: '#03346E',
-    borderRadius: 5,
-    padding: 15,
-    marginBottom: 10,
-    borderColor: '#6EACDA',
-    borderWidth: 1,
-  },
-  lostItemText: {
-    color: '#FFF',
-    fontSize: 16,
   },
   confirmationModalContainer: {
     flex: 1,
