@@ -1,7 +1,8 @@
-import { View, Text, Image, Dimensions, StyleSheet } from 'react-native'
+import { View, Text, Image, Dimensions, StyleSheet, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react'
 import FormField from '../../components/FormField';
+import axios from 'axios';
 import CustomButton from '../../components/CustomButton';
 import { Link } from 'expo-router';
 
@@ -15,9 +16,24 @@ const signin = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const submit = () => {
+  const submit = async () => {
+    setIsSubmitting(true);
+  
+    try {
+      const response = await axios.post('http://10.30.39.154:3000/api/auth/signin', form);
+  
+      if (response.status === 200) {
+        // Navigate to a new screen after successful sign-in
+        Alert.alert('Success', 'Signed in successfully');
+        // Add your navigation logic here
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Invalid credentials');
+    } finally {
 
-  }
+      setIsSubmitting(false);
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.signinBox}>
