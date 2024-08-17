@@ -31,8 +31,8 @@ const signup = () => {
         />
         <FormField 
           title = "Phone Number"
-          value={form.email}
-          handleChangeText={(e) => setForm({ ...form, email: e})}
+          value={form.phoneno}
+          handleChangeText={(e) => setForm({ ...form, phoneno: e})}
           keyboardType="phone-number"
         />
         <FormField 
