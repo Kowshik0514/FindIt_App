@@ -24,7 +24,7 @@ const signup = () => {
     // console.log("abc")
     try {
       // console.log("2");
-      const response = await axios.post('http://10.30.32.104:3000/api/auth/signup', form);
+      const response = await axios.post('http://10.30.39.154:3000/api/auth/signup', form);
   
       if (response.status === 201) {
         Alert.alert('Success', 'Account created successfully');

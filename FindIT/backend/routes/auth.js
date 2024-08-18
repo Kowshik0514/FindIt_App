@@ -41,21 +41,25 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', async (req, res) => {
     try {
-        let { emailOrPhone, password } = req.body;
+        let { email, password } = req.body;
+        console.log(req.body);
 
-        emailOrPhone = emailOrPhone.trim();
+        email = email.trim();
         password = password.trim();
 
-        let user;
+        // let user;
 
         // Determine if the input is an email or phone number and find the user accordingly
-        if (emailRegex.test(emailOrPhone)) {
-            user = await User.findOne({ email: emailOrPhone });
-        } else if (phoneRegex.test(emailOrPhone)) {
-            user = await User.findOne({ phoneno: emailOrPhone });
+        if (emailRegex.test(email)) {
+            user = await User.findOne({ email: email });
+        } else if (phoneRegex.test(email)) {
+            user = await User.findOne({ phoneno: email });
         } else {
             return res.status(400).json({ error: 'Invalid email or phone number format' });
         }
+        // console.log(email);
+        // let user = await User.findOne({ email: email });
+        // console.log(user);
 
         // Check if the user exists and if the password is correct
         if (!user || user.password !== password) {
