@@ -1,14 +1,34 @@
-import React from 'react';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Dimensions, BackHandler, Alert } from 'react-native';
 import MapView, { Marker, Polygon } from 'react-native-maps';
 import { useMarkers } from './props/MarkerContext';
-
+import { useFocusEffect } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window');
 
 const Home = () => {
   const { markers } = useMarkers();
 
   // Coordinates for IIT Tirupati
+  const handleBackPress = () => {
+    Alert.alert('Exit App', 'Are you sure you want to exit?', [
+      {
+        text: 'cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {
+        text: 'Exit',
+        onPress: () => BackHandler.exitApp(),
+      }
+    ]);
+    return true;
+  };
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    return () => {
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    }
+  }, []);
   const initialRegion = {
     latitude: 13.7149, // Center of IIT Tirupati
     longitude: 79.5920, // Center of IIT Tirupati
@@ -68,6 +88,7 @@ const Home = () => {
       </View>
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({

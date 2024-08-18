@@ -26,8 +26,8 @@ const signup = () => {
     // console.log("abc")
     try {
       // console.log("2");
-      const response = await axios.post('http://10.30.39.154:3000/api/auth/signup', form);
-  
+      const response = await axios.post('http://10.30.34.75:3000/api/auth/signup', form);
+
       if (response.status === 201) {
 
         Alert.alert('Success', 'Account created successfully');
@@ -38,36 +38,36 @@ const signup = () => {
     } catch (error) {
       console.log(error);
       console.error('Signup Error:', error);  // Log the error
-        // res.status(500).json({ error: 'Internal Server Error' });
+      // res.status(500).json({ error: 'Internal Server Error' });
       Alert.alert('Error', 'Error signing up');
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.signupBox}>
         <Text style={styles.signupText}>Sign Up</Text>
-        <FormField 
-          title = "Email"
+        <FormField
+          title="Email"
           value={form.email}
-          handleChangeText={(e) => setForm({ ...form, email: e})}
+          handleChangeText={(e) => setForm({ ...form, email: e })}
           keyboardType="email-address"
         />
-        <FormField 
-          title = "Phone Number"
+        <FormField
+          title="Phone Number"
           value={form.phoneno}
-          handleChangeText={(e) => setForm({ ...form, phoneno: e})}
+          handleChangeText={(e) => setForm({ ...form, phoneno: e })}
           keyboardType="phone-number"
         />
-        <FormField 
-          title = "Password"
+        <FormField
+          title="Password"
           value={form.password}
-          handleChangeText={(e) => setForm({ ...form, password: e})}
+          handleChangeText={(e) => setForm({ ...form, password: e })}
         />
 
-        <CustomButton 
+        <CustomButton
           title="Sign Up"
           handlePress={submit}
           isLoading={isSubmitting}
@@ -76,10 +76,10 @@ const signup = () => {
           <Text style={styles.noAcc}>Have an account already?  <Link href="/signin" style={styles.signin}>Sign In</Link></Text>
         </View>
       </View>
-        <Image
-          source={require('../../assets/images/walk3.png')}
-          style={[{ top: width * (-0.4), left: width * 0.79 }]}
-        />
+      <Image
+        source={require('../../assets/images/walk3.png')}
+        style={[{ top: width * (-0.4), left: width * 0.79 }]}
+      />
     </SafeAreaView>
   )
 }
@@ -89,9 +89,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white', // Set the background color to white
   },
-  signupBox:{
-    top: height*0.22,
-    left: width*0.06,
+  signupBox: {
+    top: height * 0.22,
+    left: width * 0.06,
     width: width * 0.7, // Width of the rectangular box
     height: height * 0.536, // Height of the rectangular box
     borderColor: '#ffffff', // Border color
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   signupText: {
     fontFamily: 'AllertaStencil-Regular',
-    fontSize: width*0.07,
+    fontSize: width * 0.07,
     color: "#3B5ED5",
     marginLeft: 18,
     marginTop: 15,
