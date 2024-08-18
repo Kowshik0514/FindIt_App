@@ -12,6 +12,7 @@ router.post('/signup', async (req, res) => {
         email = email.trim();
         phoneno = phoneno.trim();
         password = password.trim();
+        // console.log(email);
 
         if (!phoneRegex.test(phoneno)) {
             return res.status(400).json({ error: 'Phone number must be exactly 10 digits long' });
@@ -46,6 +47,7 @@ router.post('/signin', async (req, res) => {
 
         email = email.trim();
         password = password.trim();
+        // console.log("2");
 
         // let user;
 

@@ -2,6 +2,7 @@ import { View, Text, Image, Dimensions, StyleSheet, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react'
 import FormField from '../../components/FormField';
+import { useRouter } from 'expo-router';
 import CustomButton from '../../components/CustomButton';
 import axios from 'axios';
 import { Link } from 'expo-router';
@@ -9,6 +10,7 @@ import { Link } from 'expo-router';
 const { width, height } = Dimensions.get('window');
 
 const signup = () => {
+  const router = useRouter();
   const [form, setForm] = useState({
     email: '',
     phoneno: '',
@@ -27,13 +29,16 @@ const signup = () => {
       const response = await axios.post('http://10.30.39.154:3000/api/auth/signup', form);
   
       if (response.status === 201) {
+
         Alert.alert('Success', 'Account created successfully');
+        router.push('/signin');
+
         // Add your navigation logic here to sign-in page
       }
     } catch (error) {
       console.log(error);
       console.error('Signup Error:', error);  // Log the error
-        res.status(500).json({ error: 'Internal Server Error' });
+        // res.status(500).json({ error: 'Internal Server Error' });
       Alert.alert('Error', 'Error signing up');
     } finally {
       setIsSubmitting(false);
