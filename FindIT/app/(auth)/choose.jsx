@@ -29,6 +29,19 @@ const Choose = () => {
   };
   
 
+
+
+
+  // *****************GOOGLE SIGN IN********************** Refer Line 94
+  const googleSignIn = () => {
+
+  };
+  // *****************GOOGLE SIGN IN**********************
+
+
+
+
+
   const handleNavigate = (view) => {
     setCurrentView(view); // Directly set the current view without animation
   };
@@ -78,6 +91,10 @@ const Choose = () => {
           <TouchableOpacity style={[styles.button, { backgroundColor: "#3B5ED5" }]} onPress={handleSignUpClick}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, { backgroundColor: "#ffffff" }]} onPress={googleSignIn}>
+            <Image style={styles.google} source={require('../../assets/images/google.png')} />
+            <Text style={[styles.buttonText, {color: "black"}]}>Sign In</Text>
+          </TouchableOpacity>
         </>
       );
     } else if (currentView === 2) {
@@ -95,6 +112,10 @@ const Choose = () => {
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, { backgroundColor: "#3B5ED5" }]}>
             <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, { backgroundColor: "#ffffff" }]}>
+            <Image style={styles.google} source={require('../../assets/images/google.png')} />
+            <Text style={[styles.buttonText, {color: "black"}]}>Sign In</Text>
           </TouchableOpacity>
         </>
       );
@@ -114,7 +135,10 @@ const Choose = () => {
             <TouchableOpacity style={[styles.button, { backgroundColor: "#3B5ED5",  }]}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
-
+            <TouchableOpacity style={[styles.button, { backgroundColor: "#ffffff" }]}>
+              <Image style={styles.google} source={require('../../assets/images/google.png')} />
+              <Text style={[styles.buttonText, {color: "black"}]}>Sign In</Text>
+            </TouchableOpacity>
         </>
       );
     } else if (currentView === 4) {
@@ -133,7 +157,10 @@ const Choose = () => {
             <TouchableOpacity style={[styles.button, { backgroundColor: "#3B5ED5" }]}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
-
+            <TouchableOpacity style={[styles.button, { backgroundColor: "#ffffff" }]}>
+              <Image style={styles.google} source={require('../../assets/images/google.png')} />
+              <Text style={[styles.buttonText, {color: "black"}]}>Sign In</Text>
+          </TouchableOpacity>
         </>
       );
     } else if (currentView === 5) {
@@ -152,7 +179,10 @@ const Choose = () => {
             <TouchableOpacity style={[styles.button, { backgroundColor: "#3B5ED5" }]}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
-
+            <TouchableOpacity style={[styles.button, { backgroundColor: "#ffffff" }]}>
+              <Image style={styles.google} source={require('../../assets/images/google.png')} />
+              <Text style={[styles.buttonText, {color: "black"}]}>Sign In</Text>
+            </TouchableOpacity>
         </>
       );
     }
@@ -175,13 +205,14 @@ const styles = StyleSheet.create({
   button: {
     height: height*0.075,
     width: width*0.5,
-    top: height*0.11,
+    top: height*0.06,
     left: width*0.37,
     marginBottom: 25,
     borderRadius: 40,
     elevation: 7,
     alignItems: 'center',
     justifyContent: "center",
+    flexDirection: "row",
   },
   buttonText: {
     fontFamily: 'AllertaStencil-Regular',
@@ -212,6 +243,11 @@ const styles = StyleSheet.create({
     height: height * 0.75, // Match button height
     backgroundColor: 'white',
   },
+  google: {
+    height: width * 0.075,
+    width: width * 0.075,
+    marginRight: 10,
+  }
 });
 
 export default Choose;
