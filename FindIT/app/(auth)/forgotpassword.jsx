@@ -60,7 +60,7 @@ const forgotpassword = () => {
       </View>
         <Image
           source={require('../../assets/images/walk3.png')}
-          style={[{ top: width * (-0.08), left: width * 0.79 }]}
+          style={[{ top: width * (-0.29), left: width * 0.79 }]}
         />
     </SafeAreaView>
   )
