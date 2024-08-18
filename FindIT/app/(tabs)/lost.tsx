@@ -1,481 +1,448 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, Text, View, Button, TextInput, Alert, Image, TouchableOpacity, FlatList, Dimensions, Modal, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { Picker } from '@react-native-picker/picker';
+import MapView, { Marker, Polygon, Region } from 'react-native-maps';
+import { useMarkers } from './props/MarkerContext';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // or use any other icon library
+import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 
-import {  TextInput, Image, FlatList } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-// Adjust the import path as needed
+const screenWidth = Dimensions.get('window').width;
 
-interface LostItem {
-  id: string;
-  description: string;
-  location: string;
-  contact: string;
-}
-
-const initialLostItems: LostItem[] = [
-  { id: '1', description: 'Red Backpack', location: 'Food Court', contact: '123-456-7890' },
-  { id: '2', description: 'Blue Water Bottle', location: 'Lecture Hall Complex', contact: '987-654-3210' },
-  { id: '3', description: 'Black Umbrella', location: 'Indoor Stadium', contact: '555-555-5555' },
-  { id: '4', description: 'White Notebook', location: 'Library', contact: '111-222-3333' },
-  { id: '5', description: 'Gray Hoodie', location: 'Cafeteria', contact: '444-666-7777' },
+const predefinedLocations = [
+  { label: "South Campus Main Gate Security", latitude: 13.705928, longitude: 79.594460 },
+  { label: "LHC Security", latitude: 13.714702, longitude: 79.590886 },
+  { label: "AB1 Security", latitude: 13.715526, longitude: 79.591662 },
+  { label: "AB2 Security", latitude: 13.716160, longitude: 79.591192 },
+  { label: "Hostel Malhar Security", latitude: 13.717884, longitude: 79.587598 },
+  { label: "Hostel DES Security", latitude: 13.717822, longitude: 79.586838 },
+  { label: "Administrative Building Security", latitude: 13.714395, longitude: 79.593813 },
 ];
 
-const App: React.FC = () => {
-  const [isLostTabVisible, setIsLostTabVisible] = useState<boolean>(false);
-  const [lostItems, setLostItems] = useState<LostItem[]>(initialLostItems);
-
-  const openLostTab = () => {
-    setIsLostTabVisible(true);
-  };
-
-  const closeLostTab = () => {
-    setIsLostTabVisible(false);
-  };
-
-  const addLostItem = (item: Omit<LostItem, 'id'>) => {
-    setLostItems((prevItems) => [
-      ...prevItems,
-      { ...item, id: (prevItems.length + 1).toString() },
-    ]);
-  };
-
-  return (
-    <View style={styles.container_app}>
-      <View style={styles.lostItemListContainer}>
-        <FlatList
-          data={lostItems}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <View style={styles.lostItem}>
-              <Text style={styles.lostItemText}>Description: {item.description}</Text>
-              <Text style={styles.lostItemText}>Location: {item.location}</Text>
-              <Text style={styles.lostItemText}>Contact: {item.contact}</Text>
-            </View>
-          )}
-          contentContainerStyle={styles.lostItemList}
-        />
-      </View>
-
-      <TouchableOpacity onPress={openLostTab} style={styles.fab}>
-        <Text style={styles.fabText}>+</Text>
-      </TouchableOpacity>
-
-      <Modal
-        visible={isLostTabVisible}
-        animationType="slide"
-        onRequestClose={closeLostTab}
-        transparent={true}
-      >
-        <View style={styles.modalContainer}>
-          <LostTab onClose={() => { closeLostTab(); /* Call addLostItem with actual data */ }} />
-        </View>
-      </Modal>
-    </View>
-  );
+const borderCoordinates = [
+  { latitude: 13.719214, longitude: 79.584405 },
+  { latitude: 13.720713, longitude: 79.595285 },
+  { latitude: 13.705720, longitude: 79.597564 },
+  { latitude: 13.706365, longitude: 79.586295 },
+];
+const validateContactNumber = (number: string) => {
+  const regex = /^[0-9]+$/;
+  return regex.test(number);
 };
-
-
-const locations = ["food court", "Lecture Hall Complex", "Indoor Stadium"];
-
-
-
-const LostTab = ({ onClose }: { onClose: () => void }) => {
+const Lost = () => {
+  const navigation = useNavigation();
   const [itemDescription, setItemDescription] = useState<string>('');
-  const [contact, setContact] = useState<string>('');
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [itemLocation, setItemLocation] = useState<string>('');
+  const [itemName, setItemName] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState(predefinedLocations[0]);
   const [location, setLocation] = useState<string>('');
-  const [query, setQuery] = useState<string>('');
-  const [filteredLocations, setFilteredLocations] = useState<string[]>([]);
-  const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-  const [isSelectingEndDate, setIsSelectingEndDate] = useState<boolean>(false);
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false); // State to control date picker visibility
+  const [showForm, setShowForm] = useState(false);
+  const [items, setItems] = useState<{ name: string; description: string; uri: string; location: string; contact: string; date: string; }[]>([]);
+  const [activeLocation, setActiveLocation] = useState<string | null>(null);
+  const [mapSize, setMapSize] = useState({ height: 100, width: screenWidth * 0.5 });
+  const [showAllItems, setShowAllItems] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const { addMarker } = useMarkers();
+  const mapRef = useRef<MapView>(null);
+  const [contactNumber, setContactNumber] = useState<string>('');
+  const [contactError, setContactError] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; uri: string; location: string; contact: string ; date:string } | null>(null);
+  const [isFullImageVisible, setIsFullImageVisible] = useState(false);
+
+  const handleViewFullImage = () => {
+    setIsFullImageVisible(true);
+  };
+  
+  const handleCloseFullImage = () => {
+    setIsFullImageVisible(false);
+  };
+  const handleDateChange = (event: any, selectedDate: Date | undefined) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+    }
+  };
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to make this work!');
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
+      // aspect: [4, 3],
       quality: 1,
     });
 
-    if (!result.canceled && result.assets.length > 0) {
-      setPhoto(result.assets[0].uri);
+    if (!result.canceled && result.assets && result.assets[0]) {
+      setImageUri(result.assets[0].uri);
     }
   };
 
-  const handleLocationChange = (text: string) => {
-    setQuery(text);
-    setLocation(text);
-    if (text === '') {
-      setFilteredLocations([]);
-    } else {
-      setFilteredLocations(locations.filter(location => location.toLowerCase().includes(text.toLowerCase())));
-    }
-  };
-
-  const handleLocationSelect = (selectedLocation: string) => {
-    setLocation(selectedLocation);
-    setQuery(selectedLocation);
-    setFilteredLocations([]);
-  };
-
-  const handleShowConfirmation = () => {
-    setIsConfirmationModalVisible(true);
-  };
-
-  const handleConfirmSubmit = () => {
-    console.log('Item Description:', itemDescription);
-    console.log('Location:', location);
-    console.log('Contact:', contact);
-    console.log('Photo URI:', photo);
-    console.log('Lost Date Range:', startDate, 'to', endDate);
-
-    // Reset form fields
-    setItemDescription('');
-    setLocation('');
-    setContact('');
-    setPhoto(null);
-    setStartDate(undefined);
-    setEndDate(undefined);
-
-    // Close the LostTab
-    onClose();
-    setIsConfirmationModalVisible(false);
-  };
-
-  const handleCancelSubmit = () => {
-    setIsConfirmationModalVisible(false);
-  };
-
-  const handleSubmit = () => {
-    if (!itemDescription || !contact || !photo || !startDate || !endDate) {
-      alert('Please fill out all fields, upload a photo, and select a date range.');
+  const handleAddMarker = () => {
+    if (!itemName.trim()) {
+      alert('Please enter item name');
       return;
     }
+    if (!itemDescription.trim()) {
+      Alert.alert("Error", "Please enter a description for the found item.");
+      return;
+    }
+    if (!contactNumber.trim()) {
+      Alert.alert("Error", "Please enter a contact number for the found item.");
+    }
+    if (!validateContactNumber(contactNumber)) {
+      Alert.alert("Invalid contact number. Please enter a valid number.");
+      return;
+    }
+    if (!imageUri) {
+      Alert.alert("Error", "Please select an image for the found item.");
+      return;
+    }
+    if(!selectedDate){
+      Alert.alert("Error", "Please select a date for the found item.");
+    }
+    setContactError(null); // Clear any previous error
 
-    handleShowConfirmation();
-  };
 
-  const handleReset = () => {
+    setItems([...items, { name: itemName, description: itemDescription, uri: imageUri || '', location: itemLocation, contact: contactNumber,date:selectedDate.toLocaleDateString() }]);
+
+    addMarker({
+      name: itemName,
+      description: itemDescription,
+      imageUri: imageUri || '',
+      location: itemLocation,
+      contact: contactNumber,
+
+    });
+
+    Alert.alert("Success", "Marker added for the found item!");
+    setItemName('');
     setItemDescription('');
-    setLocation('');
-    setContact('');
-    setPhoto(null);
-    setStartDate(undefined);
-    setEndDate(undefined);
-    onClose();
+    setImageUri(null);
+    setContactNumber('');
+    setShowForm(false);
+    setItemLocation('');
   };
 
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      if (isSelectingEndDate) {
-        setEndDate(selectedDate);
-      } else {
-        setStartDate(selectedDate);
-        setIsSelectingEndDate(true); // Switch to end date after selecting start date
-      }
+  // const onRegionChange = (region: Region) => {
+  //   const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
+  //   const bounds = {
+  //     north: Math.max(...borderCoordinates.map(coord => coord.latitude)),
+    //   south: Math.min(...borderCoordinates.map(coord => coord.latitude)),
+    //   east: Math.max(...borderCoordinates.map(coord => coord.longitude)),
+    //   west: Math.min(...borderCoordinates.map(coord => coord.longitude)),
+    // };
+
+    // const newLatitude = Math.max(bounds.south + latitudeDelta / 2, Math.min(bounds.north - latitudeDelta / 2, latitude));
+    // const newLongitude = Math.max(bounds.west + longitudeDelta / 2, Math.min(bounds.east - longitudeDelta / 2, longitude));
+    // const newLatitudeDelta = Math.min(latitudeDelta, bounds.north - bounds.south);
+    // const newLongitudeDelta = Math.min(longitudeDelta, bounds.east - bounds.west);
+
+  //   if (mapRef.current) {
+  //     mapRef.current.animateToRegion({
+  //       latitude: newLatitude,
+  //       longitude: newLongitude,
+  //       latitudeDelta: newLatitudeDelta,
+  //       longitudeDelta: newLongitudeDelta,
+  //     }, 500);
+  //   }
+  // };
+
+  const renderItem = ({ item }: { item: { name: string; uri: string; description: string; location: string; contact: string ; date : string; } }) => (
+    <TouchableOpacity
+      style={styles.itemContainer}
+      onPress={() => setSelectedItem(item)}
+    >
+      {item.uri ? <Image source={{ uri: item.uri }} style={styles.itemImage} /> : null}
+      <Text>{item.name}</Text>
+    </TouchableOpacity>
+  );
+
+  // const toggleMapSize = () => {
+  //   setMapSize(prevSize => ({
+  //     height: prevSize.height === 300 ? 100 : 300,
+  //     width: prevSize.width === screenWidth * 0.9 ? screenWidth * 0.5 : screenWidth * 0.9,
+  //   }));
+  // };
+
+  // const handleLocationPress = (location: string) => {
+  //   setActiveLocation(location);
+  // };
+
+  const handleShowAllItems = () => {
+    if (showAllItems) {
+      setModalVisible(true); // Show the modal to select a location
+    } else {
+      setShowAllItems(false);
+      // setActiveLocation(null); // Clear the location filter
     }
   };
 
-  const openDatePicker = () => {
-    setShowDatePicker(true);
-  };
+  // const handleLocationSelect = (location: string) => {
+  //   // setActiveLocation(location);
+  //   setShowAllItems(false); // Show only items at the selected location
+  //   setModalVisible(false); // Close the modal
+  // };
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Report Lost Item</Text>
-
-      <TouchableOpacity onPress={pickImage} style={styles.uploadButton}>
-        <Text style={styles.uploadText}>Upload Photo</Text>
-      </TouchableOpacity>
-
-      {photo && <Image source={{ uri: photo }} style={styles.image} />}
-
-      <TextInput
-        style={styles.input}
-        placeholder="Item Description"
-        value={itemDescription}
-        onChangeText={setItemDescription}
-        placeholderTextColor="#6EACDA"
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Enter location"
-        value={query}
-        onChangeText={handleLocationChange}
-        placeholderTextColor="#6EACDA"
-      />
-
-      {filteredLocations.length > 0 && (
-        <FlatList
-          data={filteredLocations}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleLocationSelect(item)} style={styles.suggestionItem}>
-              <Text style={styles.suggestionText}>{item}</Text>
-            </TouchableOpacity>
+      {/* {!showForm && (
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+      )} */}
+      {showForm ? (
+        <View style={styles.formContainer}>
+          <Text style={styles.header}>Report a Lost Item</Text>
+          <Text>Name of item</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            value={itemName}
+            onChangeText={setItemName}
+          />
+          <Text>Description</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Describe the item"
+            value={itemDescription}
+            onChangeText={setItemDescription}
+          />
+          <Text>Contact Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Contact Number"
+            value={contactNumber}
+            onChangeText={setContactNumber}
+            keyboardType="phone-pad"
+          />
+          <Text>Date</Text>
+          <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+            <TextInput
+              style={styles.input}
+              placeholder="Select Date"
+              value={selectedDate ? selectedDate.toDateString() : ''}
+              editable={false}
+            />
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={selectedDate || new Date()}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+            />
           )}
-          style={styles.suggestionsContainer}
-        />
+          <Text>Location</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter the location"
+            value={itemLocation}
+            onChangeText={setItemLocation}
+          />
+
+          <TouchableOpacity style={styles.button} onPress={pickImage}>
+            <Text style={styles.buttonText}>Upload an Image</Text>
+          </TouchableOpacity>
+          {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+          <TouchableOpacity style={styles.button} onPress={handleAddMarker}>
+            <Text style={styles.buttonText}>Add Marker</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => setShowForm(false)}>
+            <Text style={styles.buttonText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.listContainer}>
+          {/* <FlatList
+            numColumns={2}
+            data={showAllItems ? items : items.filter(item => item.location === activeLocation)}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            ListHeaderComponent={<Text style={styles.header}>Lost Items {activeLocation ? `at ${activeLocation}` : ''}</Text>}
+            contentContainerStyle={styles.listContent}
+          /> */}
+
+        </View>
       )}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Contact Information"
-        value={contact}
-        onChangeText={setContact}
-        placeholderTextColor="#6EACDA"
-      />
+      {/* {!showForm && (
+        <View style={[styles.mapContainer, { height: mapSize.height, width: mapSize.width }]}>
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={{
+              latitude: 13.714702,
+              longitude: 79.590886,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+            mapType="satellite"
+            onRegionChangeComplete={onRegionChange}
+          >
+            {predefinedLocations.map((location, index) => (
+              <Marker
+                key={index}
+                coordinate={{ latitude: location.latitude, longitude: location.longitude }}
+                title={location.label}
+                onPress={() => handleLocationPress(location.label)}
+              >
+                <View style={styles.customMarker}>
+                  <Text style={styles.customMarkerText}>📍</Text>
+                </View>
+              </Marker>
+            ))}
+            <Polygon
+              coordinates={borderCoordinates}
+              strokeColor="green"
+              strokeWidth={2}
+              fillColor="rgba(94, 72, 255, 0.08)"
+            />
+          </MapView>
+          <TouchableOpacity style={styles.minimizeButton} onPress={toggleMapSize}>
+            <Text style={styles.minimizeButtonText}>{mapSize.height === 300 ? '-' : '+'}</Text>
+          </TouchableOpacity>
+        </View>
+      )} */}
+      {!showForm ? (
+        <TouchableOpacity style={styles.floatingButton} onPress={() => setShowForm(true)}>
+          <Text style={styles.floatingButtonText}>+</Text>
+        </TouchableOpacity>
+      ) :
+        <TouchableOpacity style={styles.floatingButton} onPress={() => setShowForm(false)}>
+          <Text style={styles.floatingButtonText}>-</Text>
+        </TouchableOpacity>
+      }
 
-      <TouchableOpacity onPress={openDatePicker} style={styles.datePickerButton}>
-        <Text style={styles.datePickerText}>
-          {startDate && endDate
-            ? `From: ${startDate.toDateString()} To: ${endDate.toDateString()}`
-            : startDate
-            ? `Start Date: ${startDate.toDateString()}`
-            : 'Select Date Range'}
-        </Text>
-      </TouchableOpacity>
-
-      {showDatePicker && (
-        <DateTimePicker
-          value={isSelectingEndDate && startDate ? startDate : new Date()}
-          mode="date"
-          display="default"
-          onChange={onDateChange}
-        />
-      )}
-
-      <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-        <Text style={styles.submitButtonText}>Submit</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleReset} style={styles.cancelButton}>
-        <Text style={styles.cancelButtonText}>Cancel</Text>
-      </TouchableOpacity>
-
-      {/* Confirmation Modal */}
       <Modal
-        visible={isConfirmationModalVisible}
-        animationType="slide"
         transparent={true}
-        onRequestClose={handleCancelSubmit}
+        visible={modalVisible}
+        animationType="slide"
       >
-        <View style={styles.confirmationModalContainer}>
-          <View style={styles.confirmationModalContent}>
-            <Text style={styles.confirmationModalText}>Are you sure you want to submit?</Text>
-            <View style={styles.confirmationModalButtons}>
-              <TouchableOpacity onPress={handleConfirmSubmit} style={styles.confirmationButton}>
-                <Text style={styles.confirmationButtonText}>Submit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleCancelSubmit} style={styles.confirmationButton}>
-                <Text style={styles.confirmationButtonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            
+            <Pressable
+              style={styles.modalOption}
+              onPress={() => {
+                setShowAllItems(true); // Show all items
+                setActiveLocation(null); // Clear location filter
+                setModalVisible(false); // Close the modal
+              }}
+            >
+            </Pressable>
+           
+            <Button title="Cancel" onPress={() => setModalVisible(false)} />
           </View>
         </View>
       </Modal>
+      {selectedItem && (
+      <Modal
+        transparent={true}
+        visible={!!selectedItem}
+        animationType="slide"
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.viewFullImageIcon}
+              onPress={handleViewFullImage}
+            >
+              <Icon name="zoom-in" size={30} color="#333" />
+            </TouchableOpacity>
+            <Image source={{ uri: selectedItem.uri }} style={styles.modalImage} />
+            <View style={styles.modalDetailsContainer1}>
+              <View style={styles.modalDetail1}>
+                <Text style={styles.modalDetailLabel1}>Description:</Text>
+                <Text style={styles.modalDetailText1}>{selectedItem.description}</Text>
+              </View>
+              <View style={styles.modalDetail1}>
+                <Text style={styles.modalDetailLabel1}>Location:</Text>
+                <Text style={styles.modalDetailText1}>{selectedItem.location}</Text>
+              </View>
+              <View style={styles.modalDetail1}>
+                <Text style={styles.modalDetailLabel1}>Contact:</Text>
+                <Text style={styles.modalDetailText1}>{selectedItem.contact}</Text>
+              </View>
+              <View style={styles.modalDetail1}>
+                <Text style={styles.modalDetailLabel1}>Date:</Text>
+                <Text style={styles.modalDetailText1}>{selectedItem.date}</Text>
+              </View>
+              
+            </View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setSelectedItem(null)}
+            >
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    )}
+
+    {selectedItem && isFullImageVisible && (
+      <Modal
+        transparent={true}
+        visible={isFullImageVisible}
+        animationType="fade"
+      >
+        <View style={styles.fullImageModalContainer}>
+          <TouchableOpacity
+            style={styles.closeIcon}
+            onPress={handleCloseFullImage}
+          >
+            <Icon name="close" size={30} color="#fff" />
+          </TouchableOpacity>
+          <Image source={{ uri: selectedItem.uri }} style={styles.fullImage} />
+        </View>
+      </Modal>
+    )}
     </View>
   );
 };
-
-
-
 const styles = StyleSheet.create({
-  datePickerButton: {
-    backgroundColor: '#3B5ED5',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 15,
-    width: '100%',
-    alignItems: 'center',
-  },
-  datePickerText: {
-    color: '#FFF',
-  },
-  cancelButton: {
-    backgroundColor: '#D53B3B',
-    padding: 8,
-    borderRadius: 5,
-    alignItems: 'center',
-    width: 65,
-    marginTop: 10,
-  },
-  cancelButtonText: {
-    color: '#FFF',
-    fontSize: 14,
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#1F316F',
-    alignItems: 'center',
-  },
-  container_app: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#FFF',
-  },
-  uploadButton: {
-    backgroundColor: '#3B5ED5',
-    padding: 8,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginBottom: 10,
-    width: 129,
-  },
-  uploadText: {
-    color: '#FFF',
-    fontSize: 14,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
-    borderRadius: 5,
-  },
-  input: {
-    height: 40,
-    borderColor: '#6EACDA',
-    borderWidth: 1,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-    color: '#FFF',
-    backgroundColor: '#03346E',
-    borderRadius: 5,
-    width: '70%',
-  },
-  suggestionsContainer: {
-    maxHeight: 150,
-    marginBottom: 15,
-    backgroundColor: '#03346E',
-    borderRadius: 5,
-    width: '100%',
-  },
-  suggestionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#6EACDA',
-  },
-  suggestionText: {
-    color: '#FFF',
-  },
-  submitButton: {
-    backgroundColor: '#3B5ED5',
-    padding: 8,
-    borderRadius: 5,
-    alignItems: 'center',
-    width: 65,
-  },
-  submitButtonText: {
-    color: '#FFF',
-    fontSize: 14,
-  },
-  lostItemListContainer: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: 'white',
-  },
-  lostItemList: {
-    paddingVertical: 10,
-  },
-  lostItem: {
-    backgroundColor: '#03346E',
-    borderRadius: 5,
-    padding: 15,
-    margin: 5,
-    flex: 1,
-    maxWidth: '48%',
-    borderColor: '#6EACDA',
-    borderWidth: 1,
-  },
-  lostItemText: {
-    color: '#FFF',
-    fontSize: 16,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#3B5ED5',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 10, // Higher Z index
-  },
-  fabText: {
-    color: '#FFF',
-    fontSize: 24,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  confirmationModalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  confirmationModalContent: {
-    backgroundColor: '#FFF',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    alignItems: 'center',
-  },
-  confirmationModalText: {
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  confirmationModalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  confirmationButton: {
-    backgroundColor: '#3B5ED5',
-    padding: 10,
-    borderRadius: 5,
-    width: 100,
-    alignItems: 'center',
-  },
-  confirmationButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-  },
-  fabMinus: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#D53B3B', // Red color for the minus button
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 8, // Higher Z index to ensure it is on top
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+  backButton: { position: 'absolute', top: 10, left: 10, backgroundColor: '#FF6347', borderRadius: 5, padding: 10 },
+  backButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  header: { color: 'white', fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', padding: 10, backgroundColor: '#3B5ED5', borderRadius: 10, borderColor: 'black', borderWidth: 1 },
+  input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 },
+  picker: { height: 50, marginBottom: 10 },
+  mapContainer: { position: 'absolute', bottom: 80, left: 20, width: '90%', borderRadius: 10, overflow: 'hidden' },
+  map: { width: '100%', height: '100%' },
+  image: { width: 100, height: 100, marginTop: 10, marginBottom: 10 },
+  itemContainer: { flex: 1, flexDirection: 'column', margin: 10, backgroundColor: '#f9f9f9', borderRadius: 8, padding: 15, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, width: (screenWidth / 2) - 30, },
+  itemImage: { width: '100%', height: 100, marginBottom: 10, borderRadius: 8 },
+  floatingButton: { position: 'absolute', bottom: 20, right: 20, backgroundColor: '#03346E', borderRadius: 50, width: 60, height: 60, justifyContent: 'center', alignItems: 'center' },
+  floatingButtonText: { color: '#fff', fontSize: 24, fontWeight: 'bold' },
+  minimizeButton: { position: 'absolute', top: 10, right: 10, backgroundColor: 'white', borderRadius: 15, width: 30, height: 30, justifyContent: 'center', alignItems: 'center' },
+  minimizeButtonText: { color: 'black', fontSize: 20, fontWeight: 'bold', lineHeight: 30 },
+  customMarker: { backgroundColor: 'white', padding: 5, borderRadius: 15, borderColor: '#000', borderWidth: 1 },
+  customMarkerText: { fontSize: 20 },
+  formContainer: { marginBottom: 20, padding: 20, backgroundColor: '#f9f9f9', borderRadius: 10, borderWidth: 1, borderColor: '#ddd', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 4 },
+  listContainer: { flex: 1 },
+  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modalContent: { width: '80%', backgroundColor: 'white', borderRadius: 10, padding: 20, alignItems: 'center' },
+  modalHeader: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
+  modalOption: { paddingVertical: 10, width: '100%', alignItems: 'center' },
+  listContent: { paddingHorizontal: 10, },
+  button: { backgroundColor: '#3B5ED5', padding: 10, borderRadius: 5, marginVertical: 5, alignItems: 'center' },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', },
+  modalImage: { width: '100%', height: 200, marginBottom: 10 },
+  modalContent1: {width: '90%',backgroundColor: 'white',borderRadius: 10,padding: 20,alignItems: 'center',justifyContent: 'center',shadowColor: '#000',shadowOffset: { width: 0, height: 2 },shadowOpacity: 0.1,shadowRadius: 4,elevation: 5,},
+  modalHeader1: {fontSize: 22,fontWeight: 'bold',marginBottom: 15,color: '#333',},
+  modalImage1: {width: '100%',height: 200,borderRadius: 10,marginBottom: 15,},
+  modalDetailsContainer1: {width: '100%',paddingHorizontal: 10,marginBottom: 15,},
+  modalDetail1: {marginBottom: 10,},
+  modalDetailLabel1: {fontSize: 16,fontWeight: 'bold',color: '#555',},
+  modalDetailText1: {fontSize: 16,color: '#333',},
+  fullImageModalContainer: {flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: 'rgba(0,0,0,0.8)',},
+  fullImage: {width: '90%',height: '80%',resizeMode: 'contain',},
+  closeIcon: {position: 'absolute',top: 20,right: 20,zIndex: 1,},
+  viewFullImageIcon: {position: 'absolute',top: 20,right: 20,backgroundColor:'white',zIndex: 1,borderRadius:20},
 });
 
-
-export default App;
+export default Lost;
