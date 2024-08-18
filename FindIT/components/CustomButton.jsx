@@ -22,9 +22,13 @@ const CustomButton = ({title, handlePress, isLoading}) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: 'white', // Set the background color to white
+        // flex: 1,
+        // backgroundColor: 'white', // Set the background color to white
         alignItems: "center",
+        justifyContent: "center",
+        height: width * 0.23,
+        borderColor: '#ffffff',
+        // borderWidth: 2,
       },
     button:{
         backgroundColor: "#3B5ED5",
@@ -33,7 +37,7 @@ const styles = StyleSheet.create({
         height: width * 0.15, // Height of the rectangular box
         justifyContent: "center", // Center the text vertically
         alignItems: "center", // Center the text horizontally
-        marginTop: 40,
+        // marginTop: 25,
         elevation: 9,
     },
     buttonLoading: {

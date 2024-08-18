@@ -35,7 +35,9 @@ const styles = StyleSheet.create({
         width: width * 0.68, // Width of the rectangular box
         height: width * 0.15, // Height of the rectangular box
         backgroundColor: "rgba(59, 94, 213, 0.1)",
-        borderRadius: 5,
+        // borderColor: "black",
+        borderWidth: 0.5,
+        borderRadius: 10,
         marginTop: 20,
         flexDirection: 'row', // Align children horizontally
         alignItems: 'center',

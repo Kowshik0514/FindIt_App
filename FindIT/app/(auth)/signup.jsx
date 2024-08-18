@@ -42,8 +42,8 @@ const signup = () => {
   
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.signinBox}>
-        <Text style={styles.signinText}>Sign Up</Text>
+      <View style={styles.signupBox}>
+        <Text style={styles.signupText}>Sign Up</Text>
         <FormField 
           title = "Email"
           value={form.email}
@@ -68,7 +68,7 @@ const signup = () => {
           isLoading={isSubmitting}
         />
         <View style={styles.noAccContainer}>
-          <Text style={styles.noAcc}>Have an account already?  <Link href="/signin" style={styles.signup}>Sign In</Link></Text>
+          <Text style={styles.noAcc}>Have an account already?  <Link href="/signin" style={styles.signin}>Sign In</Link></Text>
         </View>
       </View>
         <Image
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white', // Set the background color to white
   },
-  signinBox:{
+  signupBox:{
     top: height*0.22,
     left: width*0.06,
     width: width * 0.7, // Width of the rectangular box
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     borderWidth: 2, // Border width
     borderRadius: 8, // Rounded corners if needed
   },
-  signinText: {
+  signupText: {
     fontFamily: 'AllertaStencil-Regular',
     fontSize: width*0.07,
     color: "#3B5ED5",
@@ -106,11 +106,13 @@ const styles = StyleSheet.create({
   noAcc: {
     fontFamily: 'OpenSans-Regular',
     textAlign: 'center',
+    // fontSize: 0,
+    marginBottom: 10,
   },
-  signup: {
-    marginTop: -20,
+  signin: {
     color: "#3B5ED5",
     fontWeight: "900",
+    fontSize: width * 0.035,
     textShadowColor: 'rgba(59, 94, 213, 0.7)', // Color of the shadow
     textShadowOffset: { width: 0.5, height: 0.5 }, // Offset of the shadow
     textShadowRadius: 1, // Blur radius of the shadow
