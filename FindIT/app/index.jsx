@@ -34,6 +34,9 @@ export default function App() {
         const timeoutId = setTimeout(() => {
             router.push('/choose');
         }, 1700);
+        // const timeoutId = setTimeout(() => {
+        //     router.push('/signin');
+        // }, 1);
 
         return () => clearTimeout(timeoutId);
     }, [taglineOpacity, taglineTranslateY, router]);

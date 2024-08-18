@@ -14,6 +14,7 @@ const RootLayout = () => {
         "AlmendraSC-Regular": require("../assets/fonts/AlmendraSC-Regular.ttf"),
         "AllertaStencil-Regular": require("../assets/fonts/AllertaStencil-Regular.ttf"),
         "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
+        "OpenSans-Regular": require("../assets/fonts/OpenSans-Regular.ttf"),
     });
 
     useEffect(() => {
