@@ -16,19 +16,21 @@ export default function TabLayout() {
       <MarkerProvider>
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: 'white',
-            tabBarInactiveTintColor: '#03346E',
-            tabBarStyle: { backgroundColor: '#6EACDA' },
+            tabBarActiveTintColor: '#03346E',
+            tabBarInactiveTintColor: 'grey',
+            tabBarStyle: { backgroundColor: 'white' },
+            tabBarLabelStyle: { marginBottom: 6 }, // Adjust this value to move the labels up
             headerShown: false,
           }}>
           <Tabs.Screen
             name="home"
             options={{
               title: 'Home',
+
               tabBarIcon: ({ color, focused }) => (
                 <TabBarIcon
                   name={focused ? 'home' : 'home-outline'}
-                  size={focused ? 32 : 24}
+                  size={focused ? 24 : 20}
                   color={color}
                 />
               ),
@@ -41,7 +43,7 @@ export default function TabLayout() {
               tabBarIcon: ({ color, focused }) => (
                 <MaterialCommunityIcons
                   name={focused ? 'briefcase-search' : 'briefcase-search-outline'}
-                  size={focused ? 32 : 24}
+                  size={focused ? 24 : 20}
                   color={color}
                 />
               ),
@@ -55,7 +57,7 @@ export default function TabLayout() {
                 <MaterialCommunityIcons
                   name={focused ? 'map-marker-question' : 'map-marker-question-outline'}
                   color={color}
-                  size={focused ? 32 : 24}
+                  size={focused ? 24 : 20}
                 />
               ),
             }}
@@ -68,7 +70,7 @@ export default function TabLayout() {
                 <MaterialCommunityIcons
                   name={focused ? 'store-search' : 'store-search-outline'}
                   color={color}
-                  size={focused ? 32 : 24}
+                  size={focused ? 24 : 20}
                 />
               ),
             }}
@@ -81,7 +83,7 @@ export default function TabLayout() {
                 <TabBarIcon
                   name={focused ? 'person' : 'person-outline'}
                   color={color}
-                  size={focused ? 32 : 24}
+                  size={focused ? 24 : 20}
                 />
               ),
             }}

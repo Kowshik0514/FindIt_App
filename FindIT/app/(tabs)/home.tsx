@@ -1,10 +1,13 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import MapView, { Marker, Polygon } from 'react-native-maps';
+import { useMarkers } from './props/MarkerContext';
 
 const { width, height } = Dimensions.get('window');
 
 const Home = () => {
+  const { markers } = useMarkers();
+
   // Coordinates for IIT Tirupati
   const initialRegion = {
     latitude: 13.7149, // Center of IIT Tirupati
@@ -18,7 +21,6 @@ const Home = () => {
     { latitude: 13.720713, longitude: 79.595285 }, // ne
     { latitude: 13.705720, longitude: 79.597564 }, // se
     { latitude: 13.706365, longitude: 79.586295 }, // sw
-    // { latitude: 13.706365, longitude: 79.5 }, // Close the loop
   ];
 
   return (
@@ -27,15 +29,15 @@ const Home = () => {
       <View style={styles.topSection}>
         {/* Other content can be added here */}
       </View>
-      
+
       {/* Bottom half with the map */}
       <View style={styles.mapContainer}>
         <MapView
           style={styles.map}
           initialRegion={initialRegion}
           mapType="satellite" // Set to satellite view
-          // Focus on IIT Tirupati
         >
+          {/* Marker for IIT Tirupati */}
           <Marker
             coordinate={{
               latitude: 13.7149,
@@ -44,7 +46,7 @@ const Home = () => {
             title="IIT Tirupati"
             description="Indian Institute of Technology Tirupati."
           />
-          
+
           {/* Polygon to create a border around IIT Tirupati */}
           <Polygon
             coordinates={borderCoordinates}
@@ -52,6 +54,16 @@ const Home = () => {
             strokeWidth={2} // Border width
             fillColor="rgba(255,0,0,0.1)" // Optional: fill color with transparency
           />
+
+          {/* Markers added through the Found section */}
+          {markers.map((marker, index) => (
+            <Marker
+              key={index}
+              coordinate={marker.coordinate}
+              title="Found Item"
+              description={marker.description}
+            />
+          ))}
         </MapView>
       </View>
     </View>
@@ -61,16 +73,16 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'grey',
   },
   topSection: {
     flex: 1, // Adjust as needed
   },
   mapContainer: {
     flex: 1,
-    borderColor:'grey',
+    borderColor: 'grey',
     borderWidth: 5,
-    margin:20,
+    margin: 20,
   },
   map: {
     width: '100%',

@@ -1,18 +1,26 @@
 import React, { createContext, useState, ReactNode } from 'react';
 import { LatLng } from 'react-native-maps';
 
+interface Marker {
+  coordinate: LatLng;
+  name: string;
+  description: string;
+  imageUri?: string; // Optional image URI property
+  contact: string;
+}
+
 interface MarkerContextType {
-  markers: LatLng[];
-  addMarker: (coordinate: LatLng) => void;
+  markers: Marker[];
+  addMarker: (marker: Marker) => void;
 }
 
 const MarkerContext = createContext<MarkerContextType | undefined>(undefined);
 
 export const MarkerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [markers, setMarkers] = useState<LatLng[]>([]);
+  const [markers, setMarkers] = useState<Marker[]>([]);
 
-  const addMarker = (coordinate: LatLng) => {
-    setMarkers([...markers, coordinate]);
+  const addMarker = (marker: Marker) => {
+    setMarkers([...markers, marker]);
   };
 
   return (
