@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, Image, TouchableOpacity, FlatList, Dimensions, Modal, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
@@ -8,6 +8,8 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // or use any other icon library
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 import axios from 'axios';
+import { BASE_URL } from '../../backend/config/config';
+
 const screenWidth = Dimensions.get('window').width;
 
 const predefinedLocations = [
@@ -48,13 +50,13 @@ const Found = () => {
   const mapRef = useRef<MapView>(null);
   const [contactNumber, setContactNumber] = useState<string>('');
   const [contactError, setContactError] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; uri: string; location: string; contact: string ; date:string } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; uri: string; location: string; contact: string; date: string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('http://10.30.51.238:3000/api/items'); // Adjust the endpoint as needed
+        const response = await axios.get(`${BASE_URL}/api/items`); // Adjust the endpoint as needed
         setItems(response.data);
       } catch (error) {
         console.error('Error fetching items:', error); // Log the error
@@ -67,7 +69,7 @@ const Found = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get('http://10.23.66.104:3000/api/items'); // Update URL based on your server
+      const response = await axios.get(`${BASE_URL}/api/items`); // Update URL based on your server
       setItems(response.data);
     } catch (error) {
       console.error('Error fetching items:', error);
@@ -76,7 +78,7 @@ const Found = () => {
   const handleViewFullImage = () => {
     setIsFullImageVisible(true);
   };
-  
+
   const handleCloseFullImage = () => {
     setIsFullImageVisible(false);
   };
@@ -120,43 +122,43 @@ const Found = () => {
       Alert.alert("Error", "Please select an image for the found item.");
       return;
     }
-    if(!selectedDate){
+    if (!selectedDate) {
       Alert.alert("Error", "Please select a date for the found item.");
     }
     setContactError(null); // Clear any previous error
-    try{
-    await axios.post('http://10.30.51.238:3000/api/items', { // Update URL based on your server
-      name: itemName,
-      description: itemDescription,
-      url: imageUri || '',
-      location: selectedLocation.label,
-      contact: contactNumber,
-      date: selectedDate.toLocaleDateString()
-    });
-    setItems([...items, { name: itemName, description: itemDescription, uri: imageUri || '', location: selectedLocation.label, contact: contactNumber,date:selectedDate.toLocaleDateString() }]);
+    try {
+      await axios.post(`${BASE_URL}/api/items`, { // Update URL based on your server
+        name: itemName,
+        description: itemDescription,
+        url: imageUri || '',
+        location: selectedLocation.label,
+        contact: contactNumber,
+        date: selectedDate.toLocaleDateString()
+      });
+      setItems([...items, { name: itemName, description: itemDescription, uri: imageUri || '', location: selectedLocation.label, contact: contactNumber, date: selectedDate.toLocaleDateString() }]);
 
-    addMarker({
-      coordinate: {
-        latitude: selectedLocation.latitude,
-        longitude: selectedLocation.longitude,
-      },
-      name: itemName,
-      description: itemDescription,
-      imageUri: imageUri || '',
-      contact: contactNumber,
-    });
+      addMarker({
+        coordinate: {
+          latitude: selectedLocation.latitude,
+          longitude: selectedLocation.longitude,
+        },
+        name: itemName,
+        description: itemDescription,
+        imageUri: imageUri || '',
+        contact: contactNumber,
+      });
 
-    Alert.alert("Success", "Marker added for the found item!");
-    setItemName('');
-    setItemDescription('');
-    setImageUri(null);
-    setContactNumber('');
-    setShowForm(false);
-  }catch (error) {
-    console.error('Error adding item:', error);
-    Alert.alert("Error", "Failed to add marker. Please try again.");
-  }
-};
+      Alert.alert("Success", "Marker added for the found item!");
+      setItemName('');
+      setItemDescription('');
+      setImageUri(null);
+      setContactNumber('');
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error adding item:', error);
+      Alert.alert("Error", "Failed to add marker. Please try again.");
+    }
+  };
 
   const onRegionChange = (region: Region) => {
     const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
@@ -182,7 +184,7 @@ const Found = () => {
     }
   };
 
-  const renderItem = ({ item }: { item: { name: string; uri: string; description: string; location: string; contact: string ; date : string; } }) => (
+  const renderItem = ({ item }: { item: { name: string; uri: string; description: string; location: string; contact: string; date: string; } }) => (
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => setSelectedItem(item)}
@@ -218,7 +220,7 @@ const Found = () => {
     setModalVisible(false); // Close the modal
   };
 
- 
+
   return (
     <View style={styles.container}>
       {/* {!showForm && (
@@ -229,21 +231,21 @@ const Found = () => {
       {showForm ? (
         <View style={styles.formContainer}>
           <Text style={styles.header}>Add a Found Item</Text>
-          <Text>Name of item</Text>
+          {/* <Text>Name of item</Text> */}
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="Name of the item"
             value={itemName}
             onChangeText={setItemName}
           />
-          <Text>Description</Text>
+          {/* <Text>Description</Text> */}
           <TextInput
             style={styles.input}
             placeholder="Describe the item"
             value={itemDescription}
             onChangeText={setItemDescription}
           />
-          <Text>Contact Number</Text>
+          {/* <Text>Contact Number</Text> */}
           <TextInput
             style={styles.input}
             placeholder="Contact Number"
@@ -269,22 +271,24 @@ const Found = () => {
             />
           )}
           <Text>Submit to Location</Text>
-          <Picker
-            selectedValue={selectedLocation}
-            style={styles.picker}
-            onValueChange={(itemValue) => setSelectedLocation(itemValue)}
-          >
-            {predefinedLocations.map((location, index) => (
-              <Picker.Item key={index} label={location.label} value={location} />
-            ))}
-          </Picker>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedLocation}
+              style={styles.picker}
+              onValueChange={(itemValue) => setSelectedLocation(itemValue)}
+            >
+              {predefinedLocations.map((location, index) => (
+                <Picker.Item key={index} label={location.label} value={location} />
+              ))}
+            </Picker>
+          </View>
 
           <TouchableOpacity style={styles.button} onPress={pickImage}>
             <Text style={styles.buttonText}>Upload an Image</Text>
           </TouchableOpacity>
           {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
           <TouchableOpacity style={styles.button} onPress={handleAddMarker}>
-            <Text style={styles.buttonText}>Add Marker</Text>
+            <Text style={styles.buttonText}>Add Item</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={() => setShowForm(false)}>
             <Text style={styles.buttonText}>Cancel</Text>
@@ -306,7 +310,7 @@ const Found = () => {
             title="Show Items by Location"
             onPress={() => {
               // if (showAllItems) {
-                setModalVisible(true);
+              setModalVisible(true);
               // }
               // else {
               //   setShowAllItems(true);
@@ -398,66 +402,66 @@ const Found = () => {
         </View>
       </Modal>
       {selectedItem && (
-      <Modal
-        transparent={true}
-        visible={!!selectedItem}
-        animationType="slide"
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.viewFullImageIcon}
-              onPress={handleViewFullImage}
-            >
-              <Icon name="zoom-in" size={30} color="#333" />
-            </TouchableOpacity>
-            <Image source={{ uri: selectedItem.uri }} style={styles.modalImage} />
-            <View style={styles.modalDetailsContainer1}>
-              <View style={styles.modalDetail1}>
-                <Text style={styles.modalDetailLabel1}>Description:</Text>
-                <Text style={styles.modalDetailText1}>{selectedItem.description}</Text>
+        <Modal
+          transparent={true}
+          visible={!!selectedItem}
+          animationType="slide"
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.viewFullImageIcon}
+                onPress={handleViewFullImage}
+              >
+                <Icon name="zoom-in" size={30} color="#333" />
+              </TouchableOpacity>
+              <Image source={{ uri: selectedItem.uri }} style={styles.modalImage} />
+              <View style={styles.modalDetailsContainer1}>
+                <View style={styles.modalDetail1}>
+                  <Text style={styles.modalDetailLabel1}>Description:</Text>
+                  <Text style={styles.modalDetailText1}>{selectedItem.description}</Text>
+                </View>
+                <View style={styles.modalDetail1}>
+                  <Text style={styles.modalDetailLabel1}>Location:</Text>
+                  <Text style={styles.modalDetailText1}>{selectedItem.location}</Text>
+                </View>
+                <View style={styles.modalDetail1}>
+                  <Text style={styles.modalDetailLabel1}>Contact:</Text>
+                  <Text style={styles.modalDetailText1}>{selectedItem.contact}</Text>
+                </View>
+                <View style={styles.modalDetail1}>
+                  <Text style={styles.modalDetailLabel1}>Date:</Text>
+                  <Text style={styles.modalDetailText1}>{selectedItem.date}</Text>
+                </View>
               </View>
-              <View style={styles.modalDetail1}>
-                <Text style={styles.modalDetailLabel1}>Location:</Text>
-                <Text style={styles.modalDetailText1}>{selectedItem.location}</Text>
-              </View>
-              <View style={styles.modalDetail1}>
-                <Text style={styles.modalDetailLabel1}>Contact:</Text>
-                <Text style={styles.modalDetailText1}>{selectedItem.contact}</Text>
-              </View>
-              <View style={styles.modalDetail1}>
-                <Text style={styles.modalDetailLabel1}>Date:</Text>
-                <Text style={styles.modalDetailText1}>{selectedItem.date}</Text>
-              </View>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setSelectedItem(null)}
+              >
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setSelectedItem(null)}
-            >
-              <Text style={styles.buttonText}>Close</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    )}
+        </Modal>
+      )}
 
-    {selectedItem && isFullImageVisible && (
-      <Modal
-        transparent={true}
-        visible={isFullImageVisible}
-        animationType="fade"
-      >
-        <View style={styles.fullImageModalContainer}>
-          <TouchableOpacity
-            style={styles.closeIcon}
-            onPress={handleCloseFullImage}
-          >
-            <Icon name="close" size={30} color="#fff" />
-          </TouchableOpacity>
-          <Image source={{ uri: selectedItem.uri }} style={styles.fullImage} />
-        </View>
-      </Modal>
-    )}
+      {selectedItem && isFullImageVisible && (
+        <Modal
+          transparent={true}
+          visible={isFullImageVisible}
+          animationType="fade"
+        >
+          <View style={styles.fullImageModalContainer}>
+            <TouchableOpacity
+              style={styles.closeIcon}
+              onPress={handleCloseFullImage}
+            >
+              <Icon name="close" size={30} color="#fff" />
+            </TouchableOpacity>
+            <Image source={{ uri: selectedItem.uri }} style={styles.fullImage} />
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -466,8 +470,8 @@ const styles = StyleSheet.create({
   backButton: { position: 'absolute', top: 10, left: 10, backgroundColor: '#FF6347', borderRadius: 5, padding: 10 },
   backButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   header: { color: 'white', fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', padding: 10, backgroundColor: '#3B5ED5', borderRadius: 10, borderColor: 'black', borderWidth: 1 },
-  input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 },
-  picker: { height: 50, marginBottom: 10 },
+  input: { height: 40, borderColor: 'grey', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10,borderRadius:6, },
+  picker: { height: 50, marginBottom: 10, borderWidth: 1, borderColor: 'red', paddingHorizontal: 10 },
   mapContainer: { position: 'absolute', bottom: 80, left: 20, width: '90%', borderRadius: 10, overflow: 'hidden' },
   map: { width: '100%', height: '100%' },
   image: { width: 100, height: 100, marginTop: 10, marginBottom: 10 },
@@ -489,17 +493,19 @@ const styles = StyleSheet.create({
   button: { backgroundColor: '#3B5ED5', padding: 10, borderRadius: 5, marginVertical: 5, alignItems: 'center' },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', },
   modalImage: { width: '100%', height: 200, marginBottom: 10 },
-  modalContent1: {width: '90%',backgroundColor: 'white',borderRadius: 10,padding: 20,alignItems: 'center',justifyContent: 'center',shadowColor: '#000',shadowOffset: { width: 0, height: 2 },shadowOpacity: 0.1,shadowRadius: 4,elevation: 5,},
-  modalHeader1: {fontSize: 22,fontWeight: 'bold',marginBottom: 15,color: '#333',},
-  modalImage1: {width: '100%',height: 200,borderRadius: 10,marginBottom: 15,},
-  modalDetailsContainer1: {width: '100%',paddingHorizontal: 10,marginBottom: 15,},
-  modalDetail1: {marginBottom: 10,},
-  modalDetailLabel1: {fontSize: 16,fontWeight: 'bold',color: '#555',},
-  modalDetailText1: {fontSize: 16,color: '#333',},
-  fullImageModalContainer: {flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: 'rgba(0,0,0,0.8)',},
-  fullImage: {width: '90%',height: '80%',resizeMode: 'contain',},
-  closeIcon: {position: 'absolute',top: 20,right: 20,zIndex: 1,},
-  viewFullImageIcon: {position: 'absolute',top: 20,right: 20,backgroundColor:'white',zIndex: 1,borderRadius:20},
+  modalContent1: { width: '90%', backgroundColor: 'white', borderRadius: 10, padding: 20, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 5, },
+  modalHeader1: { fontSize: 22, fontWeight: 'bold', marginBottom: 15, color: '#333', },
+  modalImage1: { width: '100%', height: 200, borderRadius: 10, marginBottom: 15, },
+  modalDetailsContainer1: { width: '100%', paddingHorizontal: 10, marginBottom: 15, },
+  modalDetail1: { marginBottom: 10, },
+  modalDetailLabel1: { fontSize: 16, fontWeight: 'bold', color: '#555', },
+  modalDetailText1: { fontSize: 16, color: '#333', },
+  fullImageModalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.8)', },
+  fullImage: { width: '90%', height: '80%', resizeMode: 'contain', },
+  closeIcon: { position: 'absolute', top: 20, right: 20, zIndex: 1, },
+  viewFullImageIcon: { position: 'absolute', top: 20, right: 20, backgroundColor: 'white', zIndex: 1, borderRadius: 20 },
+  pickerContainer: {borderWidth: 1,borderColor: '#ccc',borderRadius: 8,height:50,textAlignVertical:'center' },
+
 });
 
 export default Found;

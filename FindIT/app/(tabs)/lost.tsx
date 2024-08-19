@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'; // or use any other 
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 import axios from 'axios';
 const screenWidth = Dimensions.get('window').width;
+import { BASE_URL } from '../../backend/config/config';
 
 const predefinedLocations = [
   { label: "South Campus Main Gate Security", latitude: 13.705928, longitude: 79.594460 },
@@ -54,7 +55,7 @@ const Lost = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('http://10.30.51.238:3000/api/lost_items'); // Adjust the endpoint as needed
+        const response = await axios.get(`${BASE_URL}/api/lost_items`); // Adjust the endpoint as needed
         setItems(response.data);
       } catch (error) {
         console.error('Error fetching items:', error); // Log the error
@@ -67,7 +68,7 @@ const Lost = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get('http://10.30.51.238:3000/api/lost_items'); // Update URL based on your server
+      const response = await axios.get(`${BASE_URL}/api/lost_items`); // Update URL based on your server
       setItems(response.data);
     } catch (error) {
       console.error('Error fetching items:', error);
@@ -125,7 +126,7 @@ const Lost = () => {
     }
     setContactError(null); // Clear any previous error
     try{
-    await axios.post('http://10.30.51.238:3000/api/lost_items', { // Update URL based on your server
+    await axios.post(`${BASE_URL}/api/lost_items`, { // Update URL based on your server
       name: itemName,
       description: itemDescription,
       url: imageUri || '',
@@ -217,8 +218,6 @@ const Lost = () => {
     setShowAllItems(false); // Show only items at the selected location
     setModalVisible(false); // Close the modal
   };
-
- 
   return (
     <View style={styles.container}>
       {/* {!showForm && (
@@ -229,21 +228,21 @@ const Lost = () => {
       {showForm ? (
         <View style={styles.formContainer}>
           <Text style={styles.header}>Add a Lost Item</Text>
-          <Text>Name of item</Text>
+          {/* <Text>Name of item</Text> */}
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="Name of the item"
             value={itemName}
             onChangeText={setItemName}
           />
-          <Text>Description</Text>
+          {/* <Text>Description</Text> */}
           <TextInput
             style={styles.input}
             placeholder="Describe the item"
             value={itemDescription}
             onChangeText={setItemDescription}
           />
-          <Text>Contact Number</Text>
+          {/* <Text>Contact Number</Text> */}
           <TextInput
             style={styles.input}
             placeholder="Contact Number"
@@ -268,17 +267,19 @@ const Lost = () => {
               onChange={handleDateChange}
             />
           )}
+          
           <Text>Submit to Location</Text>
-          <Picker
-            selectedValue={selectedLocation}
-            style={styles.picker}
-            onValueChange={(itemValue) => setSelectedLocation(itemValue)}
-          >
-            {predefinedLocations.map((location, index) => (
-              <Picker.Item key={index} label={location.label} value={location} />
-            ))}
-          </Picker>
-
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedLocation}
+              style={styles.picker}
+              onValueChange={(itemValue) => setSelectedLocation(itemValue)}
+            >
+              {predefinedLocations.map((location, index) => (
+                <Picker.Item key={index} label={location.label} value={location} />
+              ))}
+            </Picker>
+          </View>
           <TouchableOpacity style={styles.button} onPress={pickImage}>
             <Text style={styles.buttonText}>Upload an Image</Text>
           </TouchableOpacity>
@@ -466,9 +467,9 @@ const styles = StyleSheet.create({
   backButton: { position: 'absolute', top: 10, left: 10, backgroundColor: '#FF6347', borderRadius: 5, padding: 10 },
   backButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   header: { color: 'white', fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', padding: 10, backgroundColor: '#3B5ED5', borderRadius: 10, borderColor: 'black', borderWidth: 1 },
-  input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 },
-  picker: { height: 50, marginBottom: 10 },
-  mapContainer: { position: 'absolute', bottom: 80, left: 20, width: '90%', borderRadius: 10, overflow: 'hidden' },
+  input: { height: 40, borderColor: 'grey', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10,borderRadius:6, },
+  picker: { height: 50, marginBottom: 10, borderWidth: 1, borderColor: 'red', paddingHorizontal: 10 },
+   mapContainer: { position: 'absolute', bottom: 80, left: 20, width: '90%', borderRadius: 10, overflow: 'hidden' },
   map: { width: '100%', height: '100%' },
   image: { width: 100, height: 100, marginTop: 10, marginBottom: 10 },
   itemContainer: { flex: 1, flexDirection: 'column', margin: 10, backgroundColor: '#f9f9f9', borderRadius: 8, padding: 15, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, width: (screenWidth / 2) - 30, },
@@ -500,6 +501,8 @@ const styles = StyleSheet.create({
   fullImage: {width: '90%',height: '80%',resizeMode: 'contain',},
   closeIcon: {position: 'absolute',top: 20,right: 20,zIndex: 1,},
   viewFullImageIcon: {position: 'absolute',top: 20,right: 20,backgroundColor:'white',zIndex: 1,borderRadius:20},
+  pickerContainer: {borderWidth: 1,borderColor: '#ccc',borderRadius: 8,height:50,textAlignVertical:'center' },
+
 });
 
 export default Lost;

@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import CustomButton from '../../components/CustomButton';
 import axios from 'axios';
 import { Link } from 'expo-router';
+import { BASE_URL } from '../../backend/config/config';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,7 +27,7 @@ const signup = () => {
     // console.log("abc")
     try {
       // console.log("2");
-      const response = await axios.post('http://10.30.51.238:3000/api/auth/signup', form);
+      const response = await axios.post(`${BASE_URL}/api/auth/signup`, form);
 
       if (response.status === 201) {
 

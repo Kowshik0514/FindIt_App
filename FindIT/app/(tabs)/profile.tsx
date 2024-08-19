@@ -62,13 +62,15 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#2E48A4',
     height: width * 0.17,
-    padding: 20,
+    justifyContent: "center",
+    // padding: 20,
     alignItems: 'center',
   },
   headerText: {
     color: '#fff',
     fontSize: 24,
     fontWeight: 'bold',
+    zIndex:15
   },
   profileContainer: {
     alignItems: 'center',

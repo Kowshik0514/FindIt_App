@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import axios from 'axios';
 import CustomButton from '../../components/CustomButton';
 import { Link } from 'expo-router';
+import { BASE_URL } from '../../backend/config/config';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,7 +23,7 @@ const signin = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post('http://10.30.51.238:3000/api/auth/signin', form);
+      const response = await axios.post(`${BASE_URL}/api/auth/signin`, form);
 
       if (response.status === 200) {
         // Navigate to a new screen after successful sign-in
