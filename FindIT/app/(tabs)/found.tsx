@@ -54,7 +54,7 @@ const Found = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('http://10.30.52.38:3000/api/items'); // Adjust the endpoint as needed
+        const response = await axios.get('http://10.23.66.104:3000/api/items'); // Adjust the endpoint as needed
         setItems(response.data);
       } catch (error) {
         console.error('Error fetching items:', error); // Log the error
@@ -125,7 +125,7 @@ const Found = () => {
     }
     setContactError(null); // Clear any previous error
     try{
-    await axios.post('http://10.30.52.38:3000/api/items', { // Update URL based on your server
+    await axios.post('http://10.23.66.104:3000/api/items', { // Update URL based on your server
       name: itemName,
       description: itemDescription,
       url: imageUri || '',

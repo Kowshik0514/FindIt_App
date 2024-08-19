@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const Item = require('../models/Item'); // Assuming you have an Item model
+const Item = require('../models/Lost_item'); // Assuming you have an Item model
 
 // POST endpoint to create a new item
 router.post('/', async (req, res) => {
   try {
     const newItem = new Item(req.body);
-    console.log(req.body);
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
