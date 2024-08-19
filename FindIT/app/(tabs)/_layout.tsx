@@ -1,24 +1,25 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MarkerProvider } from './props/MarkerContext';
 
-export default function TabLayout() {
+export default function TabLayout() {  
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      {/* <StatusBar barStyle="light-content" translucent backgroundColor="rgba(31,49,111,0.4)" /> */}
       <MarkerProvider>
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: '#03346E',
-            tabBarInactiveTintColor: 'grey',
-            tabBarStyle: { backgroundColor: 'white' },
+            tabBarActiveTintColor: 'white',
+            tabBarInactiveTintColor: 'white',
+            tabBarStyle: { backgroundColor: '#2E48A4' },
             tabBarLabelStyle: { marginBottom: 6 }, // Adjust this value to move the labels up
             headerShown: false,
           }}>
@@ -26,7 +27,6 @@ export default function TabLayout() {
             name="home"
             options={{
               title: 'Home',
-
               tabBarIcon: ({ color, focused }) => (
                 <TabBarIcon
                   name={focused ? 'home' : 'home-outline'}

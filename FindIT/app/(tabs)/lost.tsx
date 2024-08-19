@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
   image: { width: 100, height: 100, marginTop: 10, marginBottom: 10 },
   itemContainer: { flex: 1, flexDirection: 'column', margin: 10, backgroundColor: '#f9f9f9', borderRadius: 8, padding: 15, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, width: (screenWidth / 2) - 30, },
   itemImage: { width: '100%', height: 100, marginBottom: 10, borderRadius: 8 },
-  floatingButton: { position: 'absolute', bottom: 20, right: 20, backgroundColor: '#03346E', borderRadius: 50, width: 60, height: 60, justifyContent: 'center', alignItems: 'center' },
+  floatingButton: { position: 'absolute', bottom: 20, right: 20, backgroundColor: '#2B449A', borderRadius: 50, width: 60, height: 60, justifyContent: 'center', alignItems: 'center' },
   floatingButtonText: { color: '#fff', fontSize: 24, fontWeight: 'bold' },
   minimizeButton: { position: 'absolute', top: 10, right: 10, backgroundColor: 'white', borderRadius: 15, width: 30, height: 30, justifyContent: 'center', alignItems: 'center' },
   minimizeButtonText: { color: 'black', fontSize: 20, fontWeight: 'bold', lineHeight: 30 },
