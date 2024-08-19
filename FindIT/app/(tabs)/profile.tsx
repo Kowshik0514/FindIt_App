@@ -12,7 +12,7 @@ const ProfilePage = () => {
         style: 'cancel',
       },
       {
-        text: 'Exit',
+        text: 'Logout',
         onPress: () => router.push('/choose'),
       }
     ]);
