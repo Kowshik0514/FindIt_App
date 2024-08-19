@@ -41,7 +41,7 @@ const Found = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false); // State to control date picker visibility
   const [showForm, setShowForm] = useState(false);
-  const [items, setItems] = useState<{ name: string; description: string; uri: string; location: string; contact: string; date: string; }[]>([]);
+  const [items, setItems] = useState<{ name: string; description: string; url: string; location: string; contact: string; date: string; }[]>([]);
   const [activeLocation, setActiveLocation] = useState<string | null>(null);
   const [mapSize, setMapSize] = useState({ height: 100, width: screenWidth * 0.5 });
   const [showAllItems, setShowAllItems] = useState(true);
@@ -50,7 +50,7 @@ const Found = () => {
   const mapRef = useRef<MapView>(null);
   const [contactNumber, setContactNumber] = useState<string>('');
   const [contactError, setContactError] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; uri: string; location: string; contact: string; date: string } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; url: string; location: string; contact: string; date: string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const Found = () => {
         contact: contactNumber,
         date: selectedDate.toLocaleDateString()
       });
-      setItems([...items, { name: itemName, description: itemDescription, uri: imageUri || '', location: selectedLocation.label, contact: contactNumber, date: selectedDate.toLocaleDateString() }]);
+      setItems([...items, { name: itemName, description: itemDescription, url: imageUri || '', location: selectedLocation.label, contact: contactNumber, date: selectedDate.toLocaleDateString() }]);
 
       addMarker({
         coordinate: {
@@ -184,12 +184,12 @@ const Found = () => {
     }
   };
 
-  const renderItem = ({ item }: { item: { name: string; uri: string; description: string; location: string; contact: string; date: string; } }) => (
+  const renderItem = ({ item }: { item: { name: string; url: string; description: string; location: string; contact: string; date: string; } }) => (
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => setSelectedItem(item)}
     >
-      {item.uri ? <Image source={{ uri: item.uri }} style={styles.itemImage} /> : null}
+      {item.url ? <Image source={{ uri: item.url }} style={styles.itemImage} /> : null}
       <Text>{item.name}</Text>
     </TouchableOpacity>
   );
@@ -415,7 +415,7 @@ const Found = () => {
               >
                 <Icon name="zoom-in" size={30} color="#333" />
               </TouchableOpacity>
-              <Image source={{ uri: selectedItem.uri }} style={styles.modalImage} />
+              <Image source={{ uri: selectedItem.url }} style={styles.modalImage} />
               <View style={styles.modalDetailsContainer1}>
                 <View style={styles.modalDetail1}>
                   <Text style={styles.modalDetailLabel1}>Description:</Text>
@@ -458,7 +458,7 @@ const Found = () => {
             >
               <Icon name="close" size={30} color="#fff" />
             </TouchableOpacity>
-            <Image source={{ uri: selectedItem.uri }} style={styles.fullImage} />
+            <Image source={{ uri: selectedItem.url }} style={styles.fullImage} />
           </View>
         </Modal>
       )}
