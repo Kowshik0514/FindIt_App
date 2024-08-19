@@ -101,11 +101,11 @@ const Home = () => {
         <Text style={{fontSize: width*0.06, marginBottom: 18, marginLeft: 7, textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowRadius: 3, }}></Text>
         <View style={styles.box1}>
           <View style={styles.box}><Text style={styles.statisticstext}>Found Items</Text><Text style={styles.statisticsno}>10</Text></View>
-          <View style={styles.box}><Text style={styles.statisticstext}>Returned</Text><Text style={styles.statisticsno}>5</Text></View>
+          <View style={styles.box}><Text style={styles.statisticstext}>Lost Items</Text><Text style={styles.statisticsno}>5</Text></View>
         </View>
         <View style={styles.box2}>
           <View style={styles.box}><Text style={styles.statisticstext}>Inquiries</Text><Text style={styles.statisticsno}>0</Text></View>
-          <View style={styles.box}><Text style={styles.statisticstext}>Return Rate</Text><Text style={styles.statisticsno}>50%</Text></View>
+          <View style={styles.box}><Text style={styles.statisticstext}>Lost Rate</Text><Text style={styles.statisticsno}>50%</Text></View>
         </View>
       </View>
     </View>
