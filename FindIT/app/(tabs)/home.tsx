@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Dimensions, BackHandler, Alert, Text, Image, TouchableOpacity } from 'react-native';
 import MapView, { Marker, Polygon } from 'react-native-maps';
 import { useMarkers } from './props/MarkerContext';
@@ -10,6 +10,7 @@ const { width, height } = Dimensions.get('window');
 
 const Home = () => {
   const { markers } = useMarkers();
+  const [mapSize, setMapSize] = useState({ height:  height * 0.09, width: width * 0.9 });
 
   // Coordinates for IIT Tirupati
   const handleBackPress = () => {
@@ -46,6 +47,12 @@ const Home = () => {
     { latitude: 13.706365, longitude: 79.586295 }, // sw
   ];
   // const router = useRouter();
+  const toggleMapSize = () => {
+    setMapSize(prevSize => ({
+      height: prevSize.height === height * 0.785 ? height * 0.09 : height * 0.785,
+      width: width * 0.9,
+    }));
+  };
   return (
     <View style={styles.container}>
       {/* Top half of the screen */}
@@ -98,7 +105,7 @@ const Home = () => {
             />
       </View>
       <View style={styles.statistics}>
-        <Text style={{fontSize: width*0.06, marginBottom: 18, marginLeft: 7, textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowRadius: 3, }}></Text>
+        <Text style={{fontSize: width*0.055, marginBottom: 12, marginLeft: width*0.02, textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowRadius: 3, }}>Statistics:</Text>
         <View style={styles.box1}>
           <View style={styles.box}><Text style={styles.statisticstext}>Found Items</Text><Text style={styles.statisticsno}>10</Text></View>
           <View style={styles.box}><Text style={styles.statisticstext}>Lost Items</Text><Text style={styles.statisticsno}>5</Text></View>
@@ -108,6 +115,52 @@ const Home = () => {
           <View style={styles.box}><Text style={styles.statisticstext}>Lost Rate</Text><Text style={styles.statisticsno}>50%</Text></View>
         </View>
       </View>
+      
+      <View style={styles.mapContainer}>
+        <Text style={{fontSize: width*0.053, marginBottom: width*0.1, marginLeft: width*0.08, textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowRadius: 3, }}>Current Location:</Text>
+        <View style={[styles.mapWrapper, { height: mapSize.height, width: mapSize.width }]}>
+          <MapView
+            style={styles.map}
+            initialRegion={initialRegion}
+            mapType="satellite" // Set to satellite view
+          >
+            {/* Marker for IIT Tirupati */}
+            <Marker
+              coordinate={{
+                latitude: 13.7149,
+                longitude: 79.5920,
+              }}
+              title="IIT Tirupati"
+              description="Indian Institute of Technology Tirupati."
+            />
+            {/* Polygon to create a border around IIT Tirupati */}
+            <Polygon
+              coordinates={borderCoordinates}
+              strokeColor="#FF0000" // Border color
+              strokeWidth={2} // Border width
+              fillColor="rgba(255,0,0,0.1)" // Optional: fill color with transparency
+            />
+            {/* Markers added through the Found section */}
+            {markers.map((marker, index) => (
+              <Marker
+                key={index}
+                coordinate={marker.coordinate}
+                title="Found Item"
+                description={marker.description}
+              />
+            ))}
+          </MapView>
+          <TouchableOpacity style={styles.minimizeButton} onPress={toggleMapSize}>
+            {/* <Text style={styles.minimizeButtonText}>{mapSize.height === height * 0.785 ? 'v' : '^'}</Text> */}
+            <Icon 
+              name={mapSize.height === height * 0.785 ? "chevron-down-outline" : "chevron-up-outline"} 
+              size={30} 
+              color="white" 
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
     </View>
   );
 
@@ -119,7 +172,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   topSection: {
-    height: width * 0.16,
+    height: width * 0.18,
     width: width,
     backgroundColor: "#2E48A4",
     borderColor: "#1F316F",
@@ -146,7 +199,7 @@ const styles = StyleSheet.create({
   carousel: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: width * 0.16,
+    marginTop: width * 0.12,
   },
   statistics:{
     width: width,
@@ -188,15 +241,38 @@ const styles = StyleSheet.create({
     marginLeft: width*0.06,
   },
   mapContainer: {
+    // flex: 1,
+    // borderColor: 'grey',
+    // borderWidth: 2,
+    // margin: 20,
+    // padding: 0,
+    marginTop: width*0.016,
+    width: width,
+    height: width*0.29,
+    // borderRadius: 10,
+    // alignItems: "center"
+  },
+  mapWrapper: {
     flex: 1,
-    borderColor: 'grey',
-    borderWidth: 5,
-    margin: 20,
+    borderWidth: 2,
+    borderRadius: 10,
+    marginLeft: width*0.056,
+    // marginRight: width*0.09,
+    overflow: 'hidden', // Ensures that the MapView respects the borderRadius
+    position: 'absolute', 
+    bottom: 0,
   },
   map: {
-    width: '100%',
-    height: '100%',
+    width: '100%', height: '100%'
   },
+  minimizeButton: { 
+    position: "absolute",
+    width: width * 0.9,
+    height:  height * 0.034,
+    backgroundColor: "rgba(195,195,195,0.4)",
+    alignItems: "center",
+   },
+  minimizeButtonText: { color: 'black', fontSize: 20, fontWeight: 'bold', lineHeight: 30 },
 });
 
 export default Home;

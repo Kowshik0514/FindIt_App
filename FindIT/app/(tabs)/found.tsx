@@ -54,7 +54,7 @@ const Found = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('http://10.23.66.104:3000/api/items'); // Adjust the endpoint as needed
+        const response = await axios.get('http://10.30.52.38:3000/api/items'); // Adjust the endpoint as needed
         setItems(response.data);
       } catch (error) {
         console.error('Error fetching items:', error); // Log the error
@@ -67,7 +67,7 @@ const Found = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get('http://10.23.66.104:3000/api/items'); // Update URL based on your server
+      const response = await axios.get('http://10.30.52.38:3000/api/items'); // Update URL based on your server
       setItems(response.data);
     } catch (error) {
       console.error('Error fetching items:', error);
@@ -125,7 +125,7 @@ const Found = () => {
     }
     setContactError(null); // Clear any previous error
     try{
-    await axios.post('http://10.23.66.104:3000/api/items', { // Update URL based on your server
+    await axios.post('http://10.30.52.38:3000/api/items', { // Update URL based on your server
       name: itemName,
       description: itemDescription,
       url: imageUri || '',
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
   backButton: { position: 'absolute', top: 10, left: 10, backgroundColor: '#FF6347', borderRadius: 5, padding: 10 },
   backButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  header: { color: 'white', fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', padding: 10, backgroundColor: '#3B5ED5', borderRadius: 10, borderColor: 'black', borderWidth: 1 },
+  header: { color: 'white', fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', padding: 10, backgroundColor: '#324FB2', borderRadius: 10, borderColor: 'black', borderWidth: 1 },
   input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 },
   picker: { height: 50, marginBottom: 10 },
   mapContainer: { position: 'absolute', bottom: 80, left: 20, width: '90%', borderRadius: 10, overflow: 'hidden' },
