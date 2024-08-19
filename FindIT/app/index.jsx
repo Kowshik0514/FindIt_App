@@ -12,8 +12,8 @@ export default function App() {
     const router = useRouter();
 
     useEffect(() => {
-        NavigationBar.setBackgroundColorAsync('#2E49A6');
-        NavigationBar.setButtonStyleAsync('light');
+        NavigationBar.setBackgroundColorAsync("rgb(246,246,248)");
+        NavigationBar.setButtonStyleAsync('dark');
         
         Animated.timing(taglineOpacity, {
             toValue: 1,
@@ -35,7 +35,7 @@ export default function App() {
             router.push('/choose');
         }, 1700);
         // const timeoutId = setTimeout(() => {
-        //     router.push('/signin');
+        //     router.push('/home');
         // }, 1);
 
         return () => clearTimeout(timeoutId);

@@ -22,7 +22,7 @@ const signin = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post('http://10.30.34.75:3000/api/auth/signin', form);
+      const response = await axios.post('http://10.23.81.30:3000/api/auth/signin', form);
 
       if (response.status === 200) {
         // Navigate to a new screen after successful sign-in
@@ -42,7 +42,7 @@ const signin = () => {
       <View style={styles.signinBox}>
         <Text style={styles.signinText}>Sign In</Text>
         <FormField
-          title="Email (or) Phone number"
+          title="Email"
           value={form.email}
           handleChangeText={(e) => setForm({ ...form, email: e })}
           keyboardType="email-address"

@@ -5,6 +5,7 @@ import { useMarkers } from './props/MarkerContext';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Carousel from 'react-native-reanimated-carousel';
+import { useNavigation } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window');
 
 const Home = () => {
@@ -44,7 +45,7 @@ const Home = () => {
     { latitude: 13.705720, longitude: 79.597564 }, // se
     { latitude: 13.706365, longitude: 79.586295 }, // sw
   ];
-
+  // const router = useRouter();
   return (
     <View style={styles.container}>
       {/* Top half of the screen */}
@@ -53,9 +54,11 @@ const Home = () => {
           source={require('../../assets/images/searchLogo.png')} style={styles.logo}
         />
         <Text style={styles.topSectionText}>Find IT!</Text>
-        <TouchableOpacity onPress={() => Alert.alert('Notifications Icon Pressed')}>
+        {/* <TouchableOpacity onPress={() => {
+
+          }}>
           <Icon name="notifications" size={28} color="#ffffff" style={styles.notf}/>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <View style={styles.carousel}>
@@ -84,9 +87,26 @@ const Home = () => {
                       {index === 1 && (
                         <Image source={require('../../assets/images/lostndfound2.jpg')} style={{width: width*0.8, height: width * 0.4, borderRadius: 25,}}/>
                       )}
+                      {index === 2 && (
+                        <Image source={require('../../assets/images/lostndfound3.jpg')} style={{width: width*0.8, height: width * 0.4, borderRadius: 25,}}/>
+                      )}
+                      {index === 3 && (
+                        <Image source={require('../../assets/images/lostndfound4.jpg')} style={{width: width*0.8, height: width * 0.4, borderRadius: 25,}}/>
+                      )}
                     </View>
                 )}
             />
+      </View>
+      <View style={styles.statistics}>
+        <Text style={{fontSize: width*0.06, marginBottom: 18, marginLeft: 7, textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowRadius: 3, }}></Text>
+        <View style={styles.box1}>
+          <View style={styles.box}><Text style={styles.statisticstext}>Found Items</Text><Text style={styles.statisticsno}>10</Text></View>
+          <View style={styles.box}><Text style={styles.statisticstext}>Returned</Text><Text style={styles.statisticsno}>5</Text></View>
+        </View>
+        <View style={styles.box2}>
+          <View style={styles.box}><Text style={styles.statisticstext}>Inquiries</Text><Text style={styles.statisticsno}>0</Text></View>
+          <View style={styles.box}><Text style={styles.statisticstext}>Return Rate</Text><Text style={styles.statisticsno}>50%</Text></View>
+        </View>
       </View>
     </View>
   );
@@ -127,6 +147,45 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: width * 0.16,
+  },
+  statistics:{
+    width: width,
+    height: width * 0.75,
+    backgroundColor: "white",
+    marginTop: width * 0.5,
+    // elevation: 10,
+    paddingLeft: width*0.07,
+    paddingRight: width*0.07,
+    alignContent: "center",
+  },
+  box1:{
+    flexDirection: 'row',
+    height: width * 0.24, // Adjust height as needed
+    justifyContent: 'space-between', // Adjusts spacing between items
+    marginBottom: width*0.07,
+  },
+  box2:{
+    flexDirection: 'row',
+    height: width * 0.24, // Adjust height as needed
+    justifyContent: 'space-between', // Adjusts spacing between items
+  },
+  box:{
+    width: width * 0.4,
+    backgroundColor: "#324FB2",
+    elevation: 10,
+    borderRadius: 15,
+    justifyContent: "center",
+  }, 
+  statisticstext:{
+    color: "white",
+    fontSize: width*0.04,
+    marginLeft: width*0.05,
+  },
+  statisticsno:{
+    color: "white",
+    fontWeight: "bold",
+    fontSize: width*0.05,
+    marginLeft: width*0.06,
   },
   mapContainer: {
     flex: 1,
