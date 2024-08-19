@@ -29,8 +29,8 @@ const ProfilePage = () => {
           source={require('../../assets/images/profile.jpg')}
           style={styles.profileImage}
         />
-        <Text style={styles.profileName}>Akash</Text>
-        <Text style={styles.profileEmail}>aaku@gmail.com</Text>
+        <Text style={styles.profileName}>Jyothiraditya</Text>
+        <Text style={styles.profileEmail}>jyothi@gmail.com</Text>
       </View>
 
       <View style={styles.infoContainer}>
