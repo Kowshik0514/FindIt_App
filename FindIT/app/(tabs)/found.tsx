@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState,useEffect,useRef } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, Image, TouchableOpacity, FlatList, Dimensions, Modal, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
@@ -7,7 +7,7 @@ import { useMarkers } from './props/MarkerContext';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // or use any other icon library
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
-
+import axios from 'axios';
 const screenWidth = Dimensions.get('window').width;
 
 const predefinedLocations = [
@@ -51,6 +51,28 @@ const Found = () => {
   const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; uri: string; location: string; contact: string ; date:string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
 
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await axios.get('http://10.23.66.104:3000/api/items'); // Adjust the endpoint as needed
+        setItems(response.data);
+      } catch (error) {
+        console.error('Error fetching items:', error); // Log the error
+        Alert.alert('Error', 'Failed to load items. Please try again later.'); // Show a user-friendly message
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  const fetchItems = async () => {
+    try {
+      const response = await axios.get('http://10.23.66.104:3000/api/items'); // Update URL based on your server
+      setItems(response.data);
+    } catch (error) {
+      console.error('Error fetching items:', error);
+    }
+  }
   const handleViewFullImage = () => {
     setIsFullImageVisible(true);
   };
@@ -78,7 +100,7 @@ const Found = () => {
     }
   };
 
-  const handleAddMarker = () => {
+  const handleAddMarker = async () => {
     if (!itemName.trim()) {
       alert('Please enter item name');
       return;
@@ -102,8 +124,15 @@ const Found = () => {
       Alert.alert("Error", "Please select a date for the found item.");
     }
     setContactError(null); // Clear any previous error
-
-
+    try{
+    await axios.post('http://10.23.66.104:3000/api/items', { // Update URL based on your server
+      name: itemName,
+      description: itemDescription,
+      url: imageUri || '',
+      location: selectedLocation.label,
+      contact: contactNumber,
+      date: selectedDate.toLocaleDateString()
+    });
     setItems([...items, { name: itemName, description: itemDescription, uri: imageUri || '', location: selectedLocation.label, contact: contactNumber,date:selectedDate.toLocaleDateString() }]);
 
     addMarker({
@@ -123,7 +152,11 @@ const Found = () => {
     setImageUri(null);
     setContactNumber('');
     setShowForm(false);
-  };
+  }catch (error) {
+    console.error('Error adding item:', error);
+    Alert.alert("Error", "Failed to add marker. Please try again.");
+  }
+};
 
   const onRegionChange = (region: Region) => {
     const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
@@ -185,7 +218,7 @@ const Found = () => {
     setModalVisible(false); // Close the modal
   };
 
-
+ 
   return (
     <View style={styles.container}>
       {/* {!showForm && (
