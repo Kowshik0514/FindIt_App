@@ -297,7 +297,7 @@ const Lost = () => {
             data={showAllItems ? items : items.filter(item => item.location === activeLocation)}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
-            ListHeaderComponent={<Text style={styles.header}>Lost Items {activeLocation ? at ${activeLocation} : ''}</Text>}
+            ListHeaderComponent={<Text style={styles.header}>Lost Items {activeLocation ? `at ${activeLocation}` : ''}</Text>}
             contentContainerStyle={styles.listContent}
           />
 
