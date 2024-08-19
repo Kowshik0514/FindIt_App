@@ -26,7 +26,7 @@ const signup = () => {
     // console.log("abc")
     try {
       // console.log("2");
-      const response = await axios.post('http://10.23.66.104:3000/api/auth/signup', form);
+      const response = await axios.post('http://10.30.51.238:3000/api/auth/signup', form);
 
       if (response.status === 201) {
 
