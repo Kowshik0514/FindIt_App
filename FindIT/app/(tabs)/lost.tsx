@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState,useEffect,useRef } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, Image, TouchableOpacity, FlatList, Dimensions, Modal, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
@@ -7,7 +7,7 @@ import { useMarkers } from './props/MarkerContext';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // or use any other icon library
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
-
+import axios from 'axios';
 const screenWidth = Dimensions.get('window').width;
 
 const predefinedLocations = [
@@ -33,10 +33,8 @@ const validateContactNumber = (number: string) => {
 const Lost = () => {
   const navigation = useNavigation();
   const [itemDescription, setItemDescription] = useState<string>('');
-  const [itemLocation, setItemLocation] = useState<string>('');
   const [itemName, setItemName] = useState<string>('');
   const [selectedLocation, setSelectedLocation] = useState(predefinedLocations[0]);
-  const [location, setLocation] = useState<string>('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false); // State to control date picker visibility
@@ -53,6 +51,28 @@ const Lost = () => {
   const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; uri: string; location: string; contact: string ; date:string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
 
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await axios.get('http://10.30.51.238:3000/api/lost_items'); // Adjust the endpoint as needed
+        setItems(response.data);
+      } catch (error) {
+        console.error('Error fetching items:', error); // Log the error
+        Alert.alert('Error', 'Failed to load items. Please try again later.'); // Show a user-friendly message
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  const fetchItems = async () => {
+    try {
+      const response = await axios.get('http://10.30.51.238:3000/api/lost_items'); // Update URL based on your server
+      setItems(response.data);
+    } catch (error) {
+      console.error('Error fetching items:', error);
+    }
+  }
   const handleViewFullImage = () => {
     setIsFullImageVisible(true);
   };
@@ -80,7 +100,7 @@ const Lost = () => {
     }
   };
 
-  const handleAddMarker = () => {
+  const handleAddMarker = async () => {
     if (!itemName.trim()) {
       alert('Please enter item name');
       return;
@@ -104,17 +124,26 @@ const Lost = () => {
       Alert.alert("Error", "Please select a date for the found item.");
     }
     setContactError(null); // Clear any previous error
-
-
-    setItems([...items, { name: itemName, description: itemDescription, uri: imageUri || '', location: itemLocation, contact: contactNumber,date:selectedDate.toLocaleDateString() }]);
+    try{
+    await axios.post('http://10.30.51.238:3000/api/lost_items', { // Update URL based on your server
+      name: itemName,
+      description: itemDescription,
+      url: imageUri || '',
+      location: selectedLocation.label,
+      contact: contactNumber,
+      date: selectedDate.toLocaleDateString()
+    });
+    setItems([...items, { name: itemName, description: itemDescription, uri: imageUri || '', location: selectedLocation.label, contact: contactNumber,date:selectedDate.toLocaleDateString() }]);
 
     addMarker({
+      coordinate: {
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+      },
       name: itemName,
       description: itemDescription,
       imageUri: imageUri || '',
-      location: itemLocation,
       contact: contactNumber,
-
     });
 
     Alert.alert("Success", "Marker added for the found item!");
@@ -123,32 +152,35 @@ const Lost = () => {
     setImageUri(null);
     setContactNumber('');
     setShowForm(false);
-    setItemLocation('');
+  }catch (error) {
+    console.error('Error adding item:', error);
+    Alert.alert("Error", "Failed to add marker. Please try again.");
+  }
+};
+
+  const onRegionChange = (region: Region) => {
+    const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
+    const bounds = {
+      north: Math.max(...borderCoordinates.map(coord => coord.latitude)),
+      south: Math.min(...borderCoordinates.map(coord => coord.latitude)),
+      east: Math.max(...borderCoordinates.map(coord => coord.longitude)),
+      west: Math.min(...borderCoordinates.map(coord => coord.longitude)),
+    };
+
+    const newLatitude = Math.max(bounds.south + latitudeDelta / 2, Math.min(bounds.north - latitudeDelta / 2, latitude));
+    const newLongitude = Math.max(bounds.west + longitudeDelta / 2, Math.min(bounds.east - longitudeDelta / 2, longitude));
+    const newLatitudeDelta = Math.min(latitudeDelta, bounds.north - bounds.south);
+    const newLongitudeDelta = Math.min(longitudeDelta, bounds.east - bounds.west);
+
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude: newLatitude,
+        longitude: newLongitude,
+        latitudeDelta: newLatitudeDelta,
+        longitudeDelta: newLongitudeDelta,
+      }, 500);
+    }
   };
-
-  // const onRegionChange = (region: Region) => {
-  //   const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
-  //   const bounds = {
-  //     north: Math.max(...borderCoordinates.map(coord => coord.latitude)),
-    //   south: Math.min(...borderCoordinates.map(coord => coord.latitude)),
-    //   east: Math.max(...borderCoordinates.map(coord => coord.longitude)),
-    //   west: Math.min(...borderCoordinates.map(coord => coord.longitude)),
-    // };
-
-    // const newLatitude = Math.max(bounds.south + latitudeDelta / 2, Math.min(bounds.north - latitudeDelta / 2, latitude));
-    // const newLongitude = Math.max(bounds.west + longitudeDelta / 2, Math.min(bounds.east - longitudeDelta / 2, longitude));
-    // const newLatitudeDelta = Math.min(latitudeDelta, bounds.north - bounds.south);
-    // const newLongitudeDelta = Math.min(longitudeDelta, bounds.east - bounds.west);
-
-  //   if (mapRef.current) {
-  //     mapRef.current.animateToRegion({
-  //       latitude: newLatitude,
-  //       longitude: newLongitude,
-  //       latitudeDelta: newLatitudeDelta,
-  //       longitudeDelta: newLongitudeDelta,
-  //     }, 500);
-  //   }
-  // };
 
   const renderItem = ({ item }: { item: { name: string; uri: string; description: string; location: string; contact: string ; date : string; } }) => (
     <TouchableOpacity
@@ -160,33 +192,33 @@ const Lost = () => {
     </TouchableOpacity>
   );
 
-  // const toggleMapSize = () => {
-  //   setMapSize(prevSize => ({
-  //     height: prevSize.height === 300 ? 100 : 300,
-  //     width: prevSize.width === screenWidth * 0.9 ? screenWidth * 0.5 : screenWidth * 0.9,
-  //   }));
-  // };
+  const toggleMapSize = () => {
+    setMapSize(prevSize => ({
+      height: prevSize.height === 300 ? 100 : 300,
+      width: prevSize.width === screenWidth * 0.9 ? screenWidth * 0.5 : screenWidth * 0.9,
+    }));
+  };
 
-  // const handleLocationPress = (location: string) => {
-  //   setActiveLocation(location);
-  // };
+  const handleLocationPress = (location: string) => {
+    setActiveLocation(location);
+  };
 
   const handleShowAllItems = () => {
     if (showAllItems) {
       setModalVisible(true); // Show the modal to select a location
     } else {
       setShowAllItems(false);
-      // setActiveLocation(null); // Clear the location filter
+      setActiveLocation(null); // Clear the location filter
     }
   };
 
-  // const handleLocationSelect = (location: string) => {
-  //   // setActiveLocation(location);
-  //   setShowAllItems(false); // Show only items at the selected location
-  //   setModalVisible(false); // Close the modal
-  // };
+  const handleLocationSelect = (location: string) => {
+    setActiveLocation(location);
+    setShowAllItems(false); // Show only items at the selected location
+    setModalVisible(false); // Close the modal
+  };
 
-
+ 
   return (
     <View style={styles.container}>
       {/* {!showForm && (
@@ -196,7 +228,7 @@ const Lost = () => {
       )} */}
       {showForm ? (
         <View style={styles.formContainer}>
-          <Text style={styles.header}>Report a Lost Item</Text>
+          <Text style={styles.header}>Add a Lost Item</Text>
           <Text>Name of item</Text>
           <TextInput
             style={styles.input}
@@ -236,13 +268,16 @@ const Lost = () => {
               onChange={handleDateChange}
             />
           )}
-          <Text>Location</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter the location"
-            value={itemLocation}
-            onChangeText={setItemLocation}
-          />
+          <Text>Submit to Location</Text>
+          <Picker
+            selectedValue={selectedLocation}
+            style={styles.picker}
+            onValueChange={(itemValue) => setSelectedLocation(itemValue)}
+          >
+            {predefinedLocations.map((location, index) => (
+              <Picker.Item key={index} label={location.label} value={location} />
+            ))}
+          </Picker>
 
           <TouchableOpacity style={styles.button} onPress={pickImage}>
             <Text style={styles.buttonText}>Upload an Image</Text>
@@ -257,19 +292,33 @@ const Lost = () => {
         </View>
       ) : (
         <View style={styles.listContainer}>
-          {/* <FlatList
+          <FlatList
             numColumns={2}
             data={showAllItems ? items : items.filter(item => item.location === activeLocation)}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
-            ListHeaderComponent={<Text style={styles.header}>Lost Items {activeLocation ? `at ${activeLocation}` : ''}</Text>}
+            ListHeaderComponent={<Text style={styles.header}>Lost Items {activeLocation ? at ${activeLocation} : ''}</Text>}
             contentContainerStyle={styles.listContent}
-          /> */}
+          />
 
+          <Button
+            // title={showAllItems ? "Show Items by Location" : "Show All Items"}
+            title="Show Items by Location"
+            onPress={() => {
+              // if (showAllItems) {
+                setModalVisible(true);
+              // }
+              // else {
+              //   setShowAllItems(true);
+              //   setActiveLocation(null); // Reset location filter
+              // }
+            }}
+
+          />
         </View>
       )}
 
-      {/* {!showForm && (
+      {!showForm && (
         <View style={[styles.mapContainer, { height: mapSize.height, width: mapSize.width }]}>
           <MapView
             ref={mapRef}
@@ -306,7 +355,7 @@ const Lost = () => {
             <Text style={styles.minimizeButtonText}>{mapSize.height === 300 ? '-' : '+'}</Text>
           </TouchableOpacity>
         </View>
-      )} */}
+      )}
       {!showForm ? (
         <TouchableOpacity style={styles.floatingButton} onPress={() => setShowForm(true)}>
           <Text style={styles.floatingButtonText}>+</Text>
@@ -324,7 +373,7 @@ const Lost = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            
+            <Text style={styles.modalHeader}>Select Location</Text>
             <Pressable
               style={styles.modalOption}
               onPress={() => {
@@ -333,8 +382,17 @@ const Lost = () => {
                 setModalVisible(false); // Close the modal
               }}
             >
+              <Text>All Locations</Text>
             </Pressable>
-           
+            {predefinedLocations.map((location, index) => (
+              <Pressable
+                key={index}
+                style={styles.modalOption}
+                onPress={() => handleLocationSelect(location.label)}
+              >
+                <Text>{location.label}</Text>
+              </Pressable>
+            ))}
             <Button title="Cancel" onPress={() => setModalVisible(false)} />
           </View>
         </View>
@@ -371,7 +429,6 @@ const Lost = () => {
                 <Text style={styles.modalDetailLabel1}>Date:</Text>
                 <Text style={styles.modalDetailText1}>{selectedItem.date}</Text>
               </View>
-              
             </View>
             <TouchableOpacity
               style={styles.button}
