@@ -10,7 +10,6 @@ import DateTimePicker from '@react-native-community/datetimepicker'; // Import D
 import axios from 'axios';
 const screenWidth = Dimensions.get('window').width;
 import { BASE_URL } from '../../backend/config/config';
-const [base64Url,setBase64Url]=useState("a");
 
 const predefinedLocations = [
   { label: "South Campus Main Gate Security", latitude: 13.705928, longitude: 79.594460 },
@@ -52,6 +51,7 @@ const Lost = () => {
   const [contactError, setContactError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; url: string; location: string; contact: string ; date:string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
+  const [base64Url,setBase64Url]=useState("a");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -304,6 +304,7 @@ const Lost = () => {
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={<Text style={styles.header}>Lost Items {activeLocation ? `at ${activeLocation}` : ''}</Text>}
+            ListFooterComponent={<View style={{ height: screenWidth*0.36 }} />}
             contentContainerStyle={styles.listContent}
           />
 
