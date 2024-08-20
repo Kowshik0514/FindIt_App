@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import axios from 'axios';
 import CustomButton from '../../components/CustomButton';
 import { Link } from 'expo-router';
-import { BASE_URL } from '../../backend/config/config';
+import { BASE_URL } from '../../../backend/config/config';
 
 const { width, height } = Dimensions.get('window');
 
