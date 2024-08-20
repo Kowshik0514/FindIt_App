@@ -307,6 +307,7 @@ const Found = () => {
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={<Text style={styles.header}>Found Items {activeLocation ? `at ${activeLocation}` : ''}</Text>}
+            ListFooterComponent={<View style={{ height: screenWidth*0.36 }} />}
             contentContainerStyle={styles.listContent}
           />
 

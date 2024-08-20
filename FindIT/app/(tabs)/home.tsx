@@ -14,8 +14,9 @@ import axios from 'axios';
 const Home = () => {
   const { markers } = useMarkers();
   const [mapSize, setMapSize] = useState({ height:  height * 0.09, width: width * 0.9 });
-    const [foundItems, setFoundItems] = useState(0);
+  const [foundItems, setFoundItems] = useState(0);
   const [lostItems, setLostItems] = useState(0);
+  const [foundRate, setFoundRate] = useState(0);
 
   const fetchStatistics = async () => {
     try {
@@ -24,6 +25,15 @@ const Home = () => {
       setFoundItems(response.data.size); // Assuming API returns found items count
       const response2 = await axios.get(`${BASE_URL}/api/sizes/lostItems`); // Example URL
       setLostItems(response2.data.size); // Assuming API returns lost items count
+      const totalLostItems = response2.data.size;
+      const totalFoundItems = response.data.size;
+
+      if (totalLostItems !== 0) {
+        const rate = (totalFoundItems / (totalFoundItems+totalLostItems)) * 100;
+        setFoundRate(rate);
+      } else {
+        setFoundRate(0); // Handle the case where foundItems is 0
+      }
     } catch (error) {
       console.error('Error fetching statistics:', error);
     }
@@ -133,7 +143,7 @@ useEffect(() => {
         </View>
         <View style={styles.box2}>
           <View style={styles.box}><Text style={styles.statisticstext}>Inquiries</Text><Text style={styles.statisticsno}>0</Text></View>
-          <View style={styles.box}><Text style={styles.statisticstext}>Lost Rate</Text><Text style={styles.statisticsno}>50%</Text></View>
+          <View style={styles.box}><Text style={styles.statisticstext}>Found Rate</Text><Text style={styles.statisticsno}>{foundRate.toFixed(2)}%</Text></View>
         </View>
       </View>
       
