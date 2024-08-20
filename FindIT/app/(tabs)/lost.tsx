@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Alert, Image, TouchableOpacity, FlatList, Dimensions, Modal, Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
@@ -31,6 +31,13 @@ const validateContactNumber = (number: string) => {
   const regex = /^[0-9]+$/;
   return regex.test(number);
 };
+const CustomButton = ({ title, onPress }: { title: string; onPress: () => void }) => {
+  return (
+    <TouchableOpacity style={styles.circleButton} onPress={onPress}>
+      <Icon name="filter-list" size={24} color="" />
+    </TouchableOpacity>
+  );
+};
 const Lost = () => {
   const navigation = useNavigation();
   const [itemDescription, setItemDescription] = useState<string>('');
@@ -49,9 +56,9 @@ const Lost = () => {
   const mapRef = useRef<MapView>(null);
   const [contactNumber, setContactNumber] = useState<string>('');
   const [contactError, setContactError] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; url: string; location: string; contact: string ; date:string } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; url: string; location: string; contact: string; date: string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
-  const [base64Url,setBase64Url]=useState("a");
+  const [base64Url, setBase64Url] = useState("a");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -78,7 +85,7 @@ const Lost = () => {
   const handleViewFullImage = () => {
     setIsFullImageVisible(true);
   };
-  
+
   const handleCloseFullImage = () => {
     setIsFullImageVisible(false);
   };
@@ -126,43 +133,43 @@ const Lost = () => {
       Alert.alert("Error", "Please select an image for the found item.");
       return;
     }
-    if(!selectedDate){
+    if (!selectedDate) {
       Alert.alert("Error", "Please select a date for the found item.");
     }
     setContactError(null); // Clear any previous error
-    try{
-    await axios.post(`${BASE_URL}/api/lost_items`, { // Update URL based on your server
-      name: itemName,
-      description: itemDescription,
-      url: base64Url || '',
-      location: selectedLocation.label,
-      contact: contactNumber,
-      date: selectedDate.toLocaleDateString()
-    });
-    setItems([...items, { name: itemName, description: itemDescription, url: imageUri || '', location: selectedLocation.label, contact: contactNumber,date:selectedDate.toLocaleDateString() }]);
+    try {
+      await axios.post(`${BASE_URL}/api/lost_items`, { // Update URL based on your server
+        name: itemName,
+        description: itemDescription,
+        url: base64Url || '',
+        location: selectedLocation.label,
+        contact: contactNumber,
+        date: selectedDate.toLocaleDateString()
+      });
+      setItems([...items, { name: itemName, description: itemDescription, url: imageUri || '', location: selectedLocation.label, contact: contactNumber, date: selectedDate.toLocaleDateString() }]);
 
-    addMarker({
-      coordinate: {
-        latitude: selectedLocation.latitude,
-        longitude: selectedLocation.longitude,
-      },
-      name: itemName,
-      description: itemDescription,
-      imageUri: imageUri || '',
-      contact: contactNumber,
-    });
+      addMarker({
+        coordinate: {
+          latitude: selectedLocation.latitude,
+          longitude: selectedLocation.longitude,
+        },
+        name: itemName,
+        description: itemDescription,
+        imageUri: imageUri || '',
+        contact: contactNumber,
+      });
 
-    Alert.alert("Success", "Marker added for the found item!");
-    setItemName('');
-    setItemDescription('');
-    setImageUri(null);
-    setContactNumber('');
-    setShowForm(false);
-  }catch (error) {
-    console.error('Error adding item:', error);
-    Alert.alert("Error", "Failed to add marker. Please try again.");
-  }
-};
+      Alert.alert("Success", "Marker added for the found item!");
+      setItemName('');
+      setItemDescription('');
+      setImageUri(null);
+      setContactNumber('');
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error adding item:', error);
+      Alert.alert("Error", "Failed to add marker. Please try again.");
+    }
+  };
 
   const onRegionChange = (region: Region) => {
     const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
@@ -188,7 +195,7 @@ const Lost = () => {
     }
   };
 
-  const renderItem = ({ item }: { item: { name: string; url: string; description: string; location: string; contact: string ; date : string; } }) => (
+  const renderItem = ({ item }: { item: { name: string; url: string; description: string; location: string; contact: string; date: string; } }) => (
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => setSelectedItem(item)}
@@ -272,7 +279,7 @@ const Lost = () => {
               onChange={handleDateChange}
             />
           )}
-          
+
           <Text>Submit to Location</Text>
           <View style={styles.pickerContainer}>
             <Picker
@@ -304,16 +311,16 @@ const Lost = () => {
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={<Text style={styles.header}>Lost Items {activeLocation ? `at ${activeLocation}` : ''}</Text>}
-            ListFooterComponent={<View style={{ height: screenWidth*0.36 }} />}
+            ListFooterComponent={<View style={{ height: screenWidth * 0.36 }} />}
             contentContainerStyle={styles.listContent}
           />
 
-          <Button
+          <CustomButton
             // title={showAllItems ? "Show Items by Location" : "Show All Items"}
             title="Show Items by Location"
             onPress={() => {
               // if (showAllItems) {
-                setModalVisible(true);
+              setModalVisible(true);
               // }
               // else {
               //   setShowAllItems(true);
@@ -405,66 +412,66 @@ const Lost = () => {
         </View>
       </Modal>
       {selectedItem && (
-      <Modal
-        transparent={true}
-        visible={!!selectedItem}
-        animationType="slide"
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity
-              style={styles.viewFullImageIcon}
-              onPress={handleViewFullImage}
-            >
-              <Icon name="zoom-in" size={30} color="#333" />
-            </TouchableOpacity>
-            <Image source={{ uri: selectedItem.url }} style={styles.modalImage} />
-            <View style={styles.modalDetailsContainer1}>
-              <View style={styles.modalDetail1}>
-                <Text style={styles.modalDetailLabel1}>Description:</Text>
-                <Text style={styles.modalDetailText1}>{selectedItem.description}</Text>
+        <Modal
+          transparent={true}
+          visible={!!selectedItem}
+          animationType="slide"
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.viewFullImageIcon}
+                onPress={handleViewFullImage}
+              >
+                <Icon name="zoom-in" size={30} color="#333" />
+              </TouchableOpacity>
+              <Image source={{ uri: selectedItem.url }} style={styles.modalImage} />
+              <View style={styles.modalDetailsContainer1}>
+                <View style={styles.modalDetail1}>
+                  <Text style={styles.modalDetailLabel1}>Description:</Text>
+                  <Text style={styles.modalDetailText1}>{selectedItem.description}</Text>
+                </View>
+                <View style={styles.modalDetail1}>
+                  <Text style={styles.modalDetailLabel1}>Location:</Text>
+                  <Text style={styles.modalDetailText1}>{selectedItem.location}</Text>
+                </View>
+                <View style={styles.modalDetail1}>
+                  <Text style={styles.modalDetailLabel1}>Contact:</Text>
+                  <Text style={styles.modalDetailText1}>{selectedItem.contact}</Text>
+                </View>
+                <View style={styles.modalDetail1}>
+                  <Text style={styles.modalDetailLabel1}>Date:</Text>
+                  <Text style={styles.modalDetailText1}>{selectedItem.date}</Text>
+                </View>
               </View>
-              <View style={styles.modalDetail1}>
-                <Text style={styles.modalDetailLabel1}>Location:</Text>
-                <Text style={styles.modalDetailText1}>{selectedItem.location}</Text>
-              </View>
-              <View style={styles.modalDetail1}>
-                <Text style={styles.modalDetailLabel1}>Contact:</Text>
-                <Text style={styles.modalDetailText1}>{selectedItem.contact}</Text>
-              </View>
-              <View style={styles.modalDetail1}>
-                <Text style={styles.modalDetailLabel1}>Date:</Text>
-                <Text style={styles.modalDetailText1}>{selectedItem.date}</Text>
-              </View>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setSelectedItem(null)}
+              >
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setSelectedItem(null)}
-            >
-              <Text style={styles.buttonText}>Close</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    )}
+        </Modal>
+      )}
 
-    {selectedItem && isFullImageVisible && (
-      <Modal
-        transparent={true}
-        visible={isFullImageVisible}
-        animationType="fade"
-      >
-        <View style={styles.fullImageModalContainer}>
-          <TouchableOpacity
-            style={styles.closeIcon}
-            onPress={handleCloseFullImage}
-          >
-            <Icon name="close" size={30} color="#fff" />
-          </TouchableOpacity>
-          <Image source={{ uri: selectedItem.url }} style={styles.fullImage} />
-        </View>
-      </Modal>
-    )}
+      {selectedItem && isFullImageVisible && (
+        <Modal
+          transparent={true}
+          visible={isFullImageVisible}
+          animationType="fade"
+        >
+          <View style={styles.fullImageModalContainer}>
+            <TouchableOpacity
+              style={styles.closeIcon}
+              onPress={handleCloseFullImage}
+            >
+              <Icon name="close" size={30} color="#fff" />
+            </TouchableOpacity>
+            <Image source={{ uri: selectedItem.url }} style={styles.fullImage} />
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -473,9 +480,9 @@ const styles = StyleSheet.create({
   backButton: { position: 'absolute', top: 10, left: 10, backgroundColor: '#FF6347', borderRadius: 5, padding: 10 },
   backButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   header: { color: 'white', fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', padding: 10, backgroundColor: '#3B5ED5', borderRadius: 10, borderColor: 'black', borderWidth: 1 },
-  input: { height: 40, borderColor: 'grey', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10,borderRadius:6, },
+  input: { height: 40, borderColor: 'grey', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10, borderRadius: 6, },
   picker: { height: 50, marginBottom: 10, borderWidth: 1, borderColor: 'red', paddingHorizontal: 10 },
-   mapContainer: { position: 'absolute', bottom: 80, left: 20, width: '90%', borderRadius: 10, overflow: 'hidden' },
+  mapContainer: { position: 'absolute', bottom: 80, left: 20, width: '90%', borderRadius: 10, overflow: 'hidden' },
   map: { width: '100%', height: '100%' },
   image: { width: 100, height: 100, marginTop: 10, marginBottom: 10 },
   itemContainer: { flex: 1, flexDirection: 'column', margin: 10, backgroundColor: '#f9f9f9', borderRadius: 8, padding: 15, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, width: (screenWidth / 2) - 30, },
@@ -496,18 +503,19 @@ const styles = StyleSheet.create({
   button: { backgroundColor: '#3B5ED5', padding: 10, borderRadius: 5, marginVertical: 5, alignItems: 'center' },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', },
   modalImage: { width: '100%', height: 200, marginBottom: 10 },
-  modalContent1: {width: '90%',backgroundColor: 'white',borderRadius: 10,padding: 20,alignItems: 'center',justifyContent: 'center',shadowColor: '#000',shadowOffset: { width: 0, height: 2 },shadowOpacity: 0.1,shadowRadius: 4,elevation: 5,},
-  modalHeader1: {fontSize: 22,fontWeight: 'bold',marginBottom: 15,color: '#333',},
-  modalImage1: {width: '100%',height: 200,borderRadius: 10,marginBottom: 15,},
-  modalDetailsContainer1: {width: '100%',paddingHorizontal: 10,marginBottom: 15,},
-  modalDetail1: {marginBottom: 10,},
-  modalDetailLabel1: {fontSize: 16,fontWeight: 'bold',color: '#555',},
-  modalDetailText1: {fontSize: 16,color: '#333',},
-  fullImageModalContainer: {flex: 1,justifyContent: 'center',alignItems: 'center',backgroundColor: 'rgba(0,0,0,0.8)',},
-  fullImage: {width: '90%',height: '80%',resizeMode: 'contain',},
-  closeIcon: {position: 'absolute',top: 20,right: 20,zIndex: 1,},
-  viewFullImageIcon: {position: 'absolute',top: 20,right: 20,backgroundColor:'white',zIndex: 1,borderRadius:20},
-  pickerContainer: {borderWidth: 1,borderColor: '#ccc',borderRadius: 8,height:50,textAlignVertical:'center' },
+  modalContent1: { width: '90%', backgroundColor: 'white', borderRadius: 10, padding: 20, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 5, },
+  modalHeader1: { fontSize: 22, fontWeight: 'bold', marginBottom: 15, color: '#333', },
+  modalImage1: { width: '100%', height: 200, borderRadius: 10, marginBottom: 15, },
+  modalDetailsContainer1: { width: '100%', paddingHorizontal: 10, marginBottom: 15, },
+  modalDetail1: { marginBottom: 10, },
+  modalDetailLabel1: { fontSize: 16, fontWeight: 'bold', color: '#555', },
+  modalDetailText1: { fontSize: 16, color: '#333', },
+  fullImageModalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.8)', },
+  fullImage: { width: '90%', height: '80%', resizeMode: 'contain', },
+  closeIcon: { position: 'absolute', top: 20, right: 20, zIndex: 1, },
+  viewFullImageIcon: { position: 'absolute', top: 20, right: 20, backgroundColor: 'white', zIndex: 1, borderRadius: 20 },
+  pickerContainer: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, height: 50, textAlignVertical: 'center' },
+  circleButton: { width: 50, height: 50, borderRadius: 25, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4, borderWidth: 1, borderColor: 'grey', },
 
 });
 

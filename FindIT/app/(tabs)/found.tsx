@@ -32,6 +32,14 @@ const validateContactNumber = (number: string) => {
   const regex = /^[0-9]+$/;
   return regex.test(number);
 };
+const CustomButton = ({ title, onPress }: { title: string; onPress: () => void }) => {
+  return (
+    <TouchableOpacity style={styles.circleButton} onPress={onPress}>
+      <Icon name="filter-list" size={24} color="" />
+    </TouchableOpacity>
+  );
+};
+
 const Found = () => {
   const navigation = useNavigation();
   const [itemDescription, setItemDescription] = useState<string>('');
@@ -52,7 +60,7 @@ const Found = () => {
   const [contactError, setContactError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; url: string; location: string; contact: string; date: string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
-  const [base64Url,setBase64Url]=useState("a");
+  const [base64Url, setBase64Url] = useState("a");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -307,11 +315,11 @@ const Found = () => {
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={<Text style={styles.header}>Found Items {activeLocation ? `at ${activeLocation}` : ''}</Text>}
-            ListFooterComponent={<View style={{ height: screenWidth*0.36 }} />}
+            ListFooterComponent={<View style={{ height: screenWidth * 0.36 }} />}
             contentContainerStyle={styles.listContent}
           />
 
-          <Button
+          <CustomButton
             // title={showAllItems ? "Show Items by Location" : "Show All Items"}
             title="Show Items by Location"
             onPress={() => {
@@ -476,7 +484,7 @@ const styles = StyleSheet.create({
   backButton: { position: 'absolute', top: 10, left: 10, backgroundColor: '#FF6347', borderRadius: 5, padding: 10 },
   backButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   header: { color: 'white', fontSize: 20, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', padding: 10, backgroundColor: '#3B5ED5', borderRadius: 10, borderColor: 'black', borderWidth: 1 },
-  input: { height: 40, borderColor: 'grey', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10,borderRadius:6, },
+  input: { height: 40, borderColor: 'grey', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10, borderRadius: 6, },
   picker: { height: 50, marginBottom: 10, borderWidth: 1, borderColor: 'red', paddingHorizontal: 10 },
   mapContainer: { position: 'absolute', bottom: 80, left: 20, width: '90%', borderRadius: 10, overflow: 'hidden' },
   map: { width: '100%', height: '100%' },
@@ -510,7 +518,8 @@ const styles = StyleSheet.create({
   fullImage: { width: '90%', height: '80%', resizeMode: 'contain', },
   closeIcon: { position: 'absolute', top: 20, right: 20, zIndex: 1, },
   viewFullImageIcon: { position: 'absolute', top: 20, right: 20, backgroundColor: 'white', zIndex: 1, borderRadius: 20 },
-  pickerContainer: {borderWidth: 1,borderColor: '#ccc',borderRadius: 8,height:50,textAlignVertical:'center' },
+  pickerContainer: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, height: 50, textAlignVertical: 'center' },
+  circleButton: { width: 50, height: 50, borderRadius: 25, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4, borderWidth: 1, borderColor: 'grey', },
 
 });
 
