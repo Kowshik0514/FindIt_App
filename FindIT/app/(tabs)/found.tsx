@@ -52,6 +52,8 @@ const Found = () => {
   const [contactError, setContactError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; url: string; location: string; contact: string; date: string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
+  const [base64Url,setBase64Url]=useState("a");
+  const [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -94,11 +96,15 @@ const Found = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       // aspect: [4, 3],
+      base64: true,
       quality: 1,
     });
-
     if (!result.canceled && result.assets && result.assets[0]) {
       setImageUri(result.assets[0].uri);
+      const a = `data:image/jpeg;base64,${result.assets[0].base64}`;  // Proper string interpolation
+      setBase64Url(a);
+      // setImage(base64Url);
+      console.log("Base64 URL:", a);
     }
   };
 
@@ -130,7 +136,7 @@ const Found = () => {
       await axios.post(`${BASE_URL}/api/items`, { // Update URL based on your server
         name: itemName,
         description: itemDescription,
-        url: imageUri || '',
+        url: base64Url || '',
         location: selectedLocation.label,
         contact: contactNumber,
         date: selectedDate.toLocaleDateString()
