@@ -6,11 +6,32 @@ import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Carousel from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/native';
+import { BASE_URL } from '../../backend/config/config';
 const { width, height } = Dimensions.get('window');
+import axios from 'axios';
+
 
 const Home = () => {
   const { markers } = useMarkers();
   const [mapSize, setMapSize] = useState({ height:  height * 0.09, width: width * 0.9 });
+    const [foundItems, setFoundItems] = useState(0);
+  const [lostItems, setLostItems] = useState(0);
+
+  const fetchStatistics = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/sizes/foundItems`); // Example URL
+      // console.log(response.data);
+      setFoundItems(response.data.size); // Assuming API returns found items count
+      const response2 = await axios.get(`${BASE_URL}/api/sizes/lostItems`); // Example URL
+      setLostItems(response2.data.size); // Assuming API returns lost items count
+    } catch (error) {
+      console.error('Error fetching statistics:', error);
+    }
+  };
+
+useEffect(() => {
+  fetchStatistics();
+}, []);
 
   // Coordinates for IIT Tirupati
   const handleBackPress = () => {
@@ -107,8 +128,8 @@ const Home = () => {
       <View style={styles.statistics}>
         <Text style={{fontSize: width*0.055, marginBottom: 12, marginLeft: width*0.02, textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowRadius: 3, }}>Statistics:</Text>
         <View style={styles.box1}>
-          <View style={styles.box}><Text style={styles.statisticstext}>Found Items</Text><Text style={styles.statisticsno}>10</Text></View>
-          <View style={styles.box}><Text style={styles.statisticstext}>Lost Items</Text><Text style={styles.statisticsno}>5</Text></View>
+          <View style={styles.box}><Text style={styles.statisticstext}>Found Items</Text><Text style={styles.statisticsno}>{foundItems}</Text></View>
+          <View style={styles.box}><Text style={styles.statisticstext}>Lost Items</Text><Text style={styles.statisticsno}>{lostItems}</Text></View>
         </View>
         <View style={styles.box2}>
           <View style={styles.box}><Text style={styles.statisticstext}>Inquiries</Text><Text style={styles.statisticsno}>0</Text></View>
