@@ -96,7 +96,7 @@ const Found = () => {
       allowsEditing: true,
       // aspect: [4, 3],
       base64: true,
-      quality: 1,
+      quality: 0.4,
     });
     if (!result.canceled && result.assets && result.assets[0]) {
       setImageUri(result.assets[0].uri);
