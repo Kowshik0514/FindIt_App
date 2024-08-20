@@ -53,7 +53,6 @@ const Found = () => {
   const [selectedItem, setSelectedItem] = useState<{ name: string; description: string; url: string; location: string; contact: string; date: string } | null>(null);
   const [isFullImageVisible, setIsFullImageVisible] = useState(false);
   const [base64Url,setBase64Url]=useState("a");
-  const [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -104,7 +103,7 @@ const Found = () => {
       const a = `data:image/jpeg;base64,${result.assets[0].base64}`;  // Proper string interpolation
       setBase64Url(a);
       // setImage(base64Url);
-      console.log("Base64 URL:", a);
+      // console.log("Base64 URL:", a);
     }
   };
 

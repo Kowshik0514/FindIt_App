@@ -10,6 +10,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'; // Import D
 import axios from 'axios';
 const screenWidth = Dimensions.get('window').width;
 import { BASE_URL } from '../../backend/config/config';
+const [base64Url,setBase64Url]=useState("a");
 
 const predefinedLocations = [
   { label: "South Campus Main Gate Security", latitude: 13.705928, longitude: 79.594460 },
@@ -93,11 +94,15 @@ const Lost = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       // aspect: [4, 3],
+      base64: true,
       quality: 1,
     });
-
     if (!result.canceled && result.assets && result.assets[0]) {
       setImageUri(result.assets[0].uri);
+      const a = `data:image/jpeg;base64,${result.assets[0].base64}`;  // Proper string interpolation
+      setBase64Url(a);
+      // setImage(base64Url);
+      // console.log("Base64 URL:", a);
     }
   };
 
@@ -129,7 +134,7 @@ const Lost = () => {
     await axios.post(`${BASE_URL}/api/lost_items`, { // Update URL based on your server
       name: itemName,
       description: itemDescription,
-      url: imageUri || '',
+      url: base64Url || '',
       location: selectedLocation.label,
       contact: contactNumber,
       date: selectedDate.toLocaleDateString()
