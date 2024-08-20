@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Dimensions, BackHandler, Alert, Text, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Dimensions, BackHandler, Alert, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import MapView, { Marker, Polygon } from 'react-native-maps';
 import { useMarkers } from './props/MarkerContext';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,7 +9,6 @@ import { useNavigation } from '@react-navigation/native';
 import { BASE_URL } from '../../backend/config/config';
 const { width, height } = Dimensions.get('window');
 import axios from 'axios';
-
 
 const Home = () => {
   const { markers } = useMarkers();
@@ -85,7 +84,8 @@ useEffect(() => {
     }));
   };
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+   
       {/* Top half of the screen */}
       <View style={styles.topSection}>
         <Image
@@ -192,7 +192,8 @@ useEffect(() => {
         </View>
       </View>
 
-    </View>
+
+    </ScrollView>
   );
 
 };
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     width: width,
     height: width * 0.75,
     backgroundColor: "white",
-    marginTop: width * 0.5,
+    marginTop: width * 0.1,
     // elevation: 10,
     paddingLeft: width*0.07,
     paddingRight: width*0.07,
@@ -280,6 +281,7 @@ const styles = StyleSheet.create({
     marginTop: width*0.016,
     width: width,
     height: width*0.29,
+    marginBottom: width*0.1,
     // borderRadius: 10,
     // alignItems: "center"
   },
