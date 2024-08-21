@@ -6,7 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Carousel from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/native';
-import { BASE_URL } from '../../../backend/config/config';
+import { BASE_URL } from '../config';
 const { width, height } = Dimensions.get('window');
 import axios from 'axios';
 

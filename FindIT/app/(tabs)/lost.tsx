@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'; // or use any other 
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 import axios from 'axios';
 const screenWidth = Dimensions.get('window').width;
-import { BASE_URL } from '../../../backend/config/config';
+import { BASE_URL } from '../config';
 
 const predefinedLocations = [
   { label: "South Campus Main Gate Security", latitude: 13.705928, longitude: 79.594460 },

@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // or use any other icon library
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 import axios from 'axios';
-import { BASE_URL } from '../../../backend/config/config';
+import { BASE_URL } from '../config';
 
 const screenWidth = Dimensions.get('window').width;
 
