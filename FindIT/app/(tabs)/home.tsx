@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Dimensions, BackHandler, Alert, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
-import MapView, { Marker, Polygon } from 'react-native-maps';
+// import MapView, { Marker, Polygon } from 'react-native-maps';
 import { useMarkers } from './props/MarkerContext';
-import { useFocusEffect } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
+// import Icon from 'react-native-vector-icons/Ionicons';
 import Carousel from 'react-native-reanimated-carousel';
-import { useNavigation } from '@react-navigation/native';
 import { BASE_URL } from '../config';
 const { width, height } = Dimensions.get('window');
 import axios from 'axios';
@@ -147,7 +145,7 @@ useEffect(() => {
         </View>
       </View>
       
-      <View style={styles.mapContainer}>
+      {/* <View style={styles.mapContainer}>
         <Text style={{fontSize: width*0.053, marginBottom: width*0.1, marginLeft: width*0.08, textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowRadius: 3, }}>Current Location:</Text>
         <View style={[styles.mapWrapper, { height: mapSize.height, width: mapSize.width }]}>
           <MapView
@@ -155,7 +153,6 @@ useEffect(() => {
             initialRegion={initialRegion}
             mapType="satellite" // Set to satellite view
           >
-            {/* Marker for IIT Tirupati */}
             <Marker
               coordinate={{
                 latitude: 13.7149,
@@ -164,14 +161,12 @@ useEffect(() => {
               title="IIT Tirupati"
               description="Indian Institute of Technology Tirupati."
             />
-            {/* Polygon to create a border around IIT Tirupati */}
             <Polygon
               coordinates={borderCoordinates}
               strokeColor="#FF0000" // Border color
               strokeWidth={2} // Border width
               fillColor="rgba(255,0,0,0.1)" // Optional: fill color with transparency
             />
-            {/* Markers added through the Found section */}
             {markers.map((marker, index) => (
               <Marker
                 key={index}
@@ -182,7 +177,6 @@ useEffect(() => {
             ))}
           </MapView>
           <TouchableOpacity style={styles.minimizeButton} onPress={toggleMapSize}>
-            {/* <Text style={styles.minimizeButtonText}>{mapSize.height === height * 0.785 ? 'v' : '^'}</Text> */}
             <Icon 
               name={mapSize.height === height * 0.785 ? "chevron-down-outline" : "chevron-up-outline"} 
               size={30} 
@@ -190,7 +184,7 @@ useEffect(() => {
             />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
 
 
     </ScrollView>
