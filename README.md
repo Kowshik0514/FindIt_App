@@ -30,10 +30,10 @@ All commands are run from the FindIT directory of the project, from a terminal:
 
 ## Build Instructions
 
-1. **Remove "projectid" field in eas.json file**: Ensure that the projectid field is not present in the eas.json configuration file.
-2. *Log in to EAS*: Run eas login to log in to your Expo account.
-3. *Configure EAS Build*: Execute eas build:configure and select the Android device configuration after running the command.
-4. *Build the Android App*: Run eas build --platform android to generate the .aab file.
+1. *Remove projectid field in eas.json file:* Ensure that the `projectid` field is not present in the eas.json configuration file.
+2. *Log in to EAS*: Run `eas login` to log in to your Expo account.
+3. *Configure EAS Build*: Execute `eas build:configure` and select the Android device configuration after running the command.
+4. *Build the Android App*: Run `eas build --platform android` to generate the .aab file.
 5. *Convert .aab to .apk*: Convert the generated .aab file to an .apk file if needed.
 
 
