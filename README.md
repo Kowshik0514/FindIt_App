@@ -12,12 +12,16 @@ FindIT is a comprehensive lost and found application designed to help individual
 - *Lost Items*: A dedicated section for users to report lost items, including details and images. Users can easily submit new reports and track the status of their lost items.
 - *Found Items*: A section for users to report and browse found items. Users can add details and images of items they've found, and others can view and claim these items.
 - *Profile*: Manage user profiles and settings. View personal information, edit profile details, and manage account settings.
-- *Maps*: Included maps in the previous version of app, but due to license issue from google, it was commented out.
+- **Maps**: Included maps in the previous version of app, but due to license issue from google, it was commented out.Maps have detailed locations and markers to filter the items at specific locations in map.
   
 ## Commands
 
 All commands are run from the FindIT directory of the project, from a terminal:
-
+  ```bash
+  cd FindIT
+  npm install
+  npm start
+  ```
 | Command                 | Action                                                 |
 | :---------------------- | :----------------------------------------------------- |
 | npm install         | Installs dependencies                                  |
