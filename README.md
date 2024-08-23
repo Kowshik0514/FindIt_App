@@ -90,3 +90,33 @@ The server logs a message when started.
 - Sanjay
 - Aarya
 - Jyothiraditya
+ <br>
+Here are some of the snapshots of our app!!
+<br>
+![WhatsApp Image 2024-08-23 at 23 03 00_eb16569c](https://github.com/user-attachments/assets/e6768c27-d746-4bbb-b49e-370f9b7b207e)
+<br>
+![WhatsApp Image 2024-08-23 at 23 04 03_9d55c620](https://github.com/user-attachments/assets/a4576959-de63-4dbd-9a72-645620e70356)
+<br>
+![WhatsApp Image 2024-08-23 at 23 04 04_a5d9aa09](https://github.com/user-attachments/assets/dfbe873b-26da-429a-a844-4ea3f2bda8a9)
+<br>
+![WhatsApp Image 2024-08-23 at 23 04 37_e984c1aa](https://github.com/user-attachments/assets/dc64b1a2-ec40-4167-9a08-1f5de0d32a13)
+<br>
+![WhatsApp Image 2024-08-23 at 23 04 38_4f62682c](https://github.com/user-attachments/assets/c481c5ce-adb4-4a60-8cd8-786d1df28a64)
+<br>
+![WhatsApp Image 2024-08-23 at 23 05 18_e1660ecb](https://github.com/user-attachments/assets/cb2cf553-5a29-4a32-9b4b-bb800233a15b)
+<br>
+![WhatsApp Image 2024-08-23 at 23 05 35_c455142f](https://github.com/user-attachments/assets/8f80c8dd-02e8-485c-b780-19067ea3adf9)
+<br>
+![WhatsApp Image 2024-08-23 at 23 05 35_8c65fda6](https://github.com/user-attachments/assets/455f327b-5ffc-4264-a85f-465fdf0434b0)
+<br>
+![WhatsApp Image 2024-08-23 at 23 05 35_1531e18b](https://github.com/user-attachments/assets/49cad1c9-efbd-4d73-a65d-47a744f2a54f)
+<br>
+
+
+
+
+
+
+
+
+
