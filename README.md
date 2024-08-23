@@ -79,6 +79,9 @@ Connects to MongoDB, configures middleware, and sets up routes for authenticatio
 
 The server logs a message when started.
 
+
+**Note**: We deployed our server in Render which is a Free platform for deploying, so the it takes around fifty seconds when the server runs for the first time in a while. 
+
 ## Contribution
 
 **Front End:**
@@ -94,15 +97,15 @@ The server logs a message when started.
 Here are some of the snapshots of our app!!
 <br>
 <br>
-<img src="https://github.com/user-attachments/assets/e6768c27-d746-4bbb-b49e-370f9b7b207e"/><br>
-<img src="https://github.com/user-attachments/assets/a4576959-de63-4dbd-9a72-645620e70356"/><br>
-<img src="https://github.com/user-attachments/assets/dfbe873b-26da-429a-a844-4ea3f2bda8a9"/><br>
-<img src="https://github.com/user-attachments/assets/dc64b1a2-ec40-4167-9a08-1f5de0d32a13"/><br>
-<img src="https://github.com/user-attachments/assets/c481c5ce-adb4-4a60-8cd8-786d1df28a64"/><br>
-<img src="https://github.com/user-attachments/assets/cb2cf553-5a29-4a32-9b4b-bb800233a15b"/><br>
-<img src="https://github.com/user-attachments/assets/8f80c8dd-02e8-485c-b780-19067ea3adf9"/><br>
-<img src="https://github.com/user-attachments/assets/455f327b-5ffc-4264-a85f-465fdf0434b0"/><br>
-<img src="https://github.com/user-attachments/assets/49cad1c9-efbd-4d73-a65d-47a744f2a54f"/>
+<img src="https://github.com/user-attachments/assets/e6768c27-d746-4bbb-b49e-370f9b7b207e" width="" height="599"/><br>
+<img src="https://github.com/user-attachments/assets/a4576959-de63-4dbd-9a72-645620e70356" width="" height="599"/><br>
+<img src="https://github.com/user-attachments/assets/dfbe873b-26da-429a-a844-4ea3f2bda8a9" width="" height="599"/><br>
+<img src="https://github.com/user-attachments/assets/dc64b1a2-ec40-4167-9a08-1f5de0d32a13" width="" height="599"/><br>
+<img src="https://github.com/user-attachments/assets/c481c5ce-adb4-4a60-8cd8-786d1df28a64" width="" height="599"/><br>
+<img src="https://github.com/user-attachments/assets/cb2cf553-5a29-4a32-9b4b-bb800233a15b" width="" height="599"/><br>
+<img src="https://github.com/user-attachments/assets/8f80c8dd-02e8-485c-b780-19067ea3adf9"  width="" height="599"/><br>
+<img src="https://github.com/user-attachments/assets/455f327b-5ffc-4264-a85f-465fdf0434b0" width="" height="599"/><br>
+<img src="https://github.com/user-attachments/assets/49cad1c9-efbd-4d73-a65d-47a744f2a54f" width="" height="599"/>
 
 
 
