@@ -37,9 +37,9 @@ All commands are run from the FindIT directory of the project, from a terminal:
 5. *Convert .aab to .apk*: Convert the generated .aab file to an .apk file if needed.
 
 
-## Lost Items Routes
+### Lost Items Routes
 
-### Routes
+#### Routes
 
 - **POST /**: Creates a new lost item.  
   - **Request Body**: Must include properties defined in the Item model.  
@@ -48,17 +48,17 @@ All commands are run from the FindIT directory of the project, from a terminal:
 - **GET /**: Retrieves all lost items.  
   - **Response**: Returns an array of items with a 200 status. On failure, returns a 500 error.
 
-### Error Handling
+#### Error Handling
 
 Returns a 500 status and error message on exceptions.
 
 ---
 
-## Express Server
+### Express Server
 
 Connects to MongoDB, configures middleware, and sets up routes for authentication, items, lost items, and sizes. Enables CORS and runs the server on port 3000. The `/signin` endpoint validates user credentials and returns appropriate success or error messages.
 
-### Requirements
+#### Requirements
 
 - **express**: Web framework for Node.js.
 - **connectDB**: MongoDB connection function.
@@ -68,7 +68,7 @@ Connects to MongoDB, configures middleware, and sets up routes for authenticatio
 - **sizes**: Size management routes.
 - **cors**: Cross-Origin Resource Sharing middleware.
 
-### Usage
+#### Usage
 
 - **POST /**: Create a new item.
 - **GET /**: Fetch all items.
