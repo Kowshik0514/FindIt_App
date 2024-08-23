@@ -13,6 +13,9 @@ FindIT is a comprehensive lost and found application designed to help individual
 - **Found Items**: A section for users to report and browse found items. Users can add details and images of items they've found, and others can view and claim these items.
 - **Profile**: Manage user profiles and settings. View personal information, edit profile details, and manage account settings.
 - **Maps**: Included maps in the previous version of app, but due to license issue from google, it was commented out.Maps have detailed locations and markers to filter the items at specific locations in map.
+- **UI Design**: You can view the UI design for the FindIT app on Figma:  
+[FindIT Figma Design](https://www.figma.com/design/t9Os9U6dvPQTW1FuGW1Q70/FindIT!?node-id=0-1&t=V3KdSNTmEwN9gSVe-1)
+
   
 ## Commands
 
@@ -28,10 +31,6 @@ All commands are run from the FindIT directory of the project, from a terminal:
 | npm start           | You get Metro waiting on exp+findit://expo-development-client/?url=http%3A%2F%2F*10.30.43.54*%3A8081 --> Open ExpoGo app and put "exp://xx.xx.xx.xx:8081" where xx is bolded ip address.           |
 
 
-## Deploy to production (manual)
-
-*You can create an optimized production build with:*
-
 ## Build Instructions
 
 1. *Remove projectid field in eas.json file:* Ensure that the `projectid` field is not present in the eas.json configuration file.
@@ -41,9 +40,9 @@ All commands are run from the FindIT directory of the project, from a terminal:
 5. *Convert .aab to .apk*: Convert the generated .aab file to an .apk file if needed.
 
 
-### Lost Items Routes
+## Backend
 
-#### Routes
+### Lost Items Routes-
 
 - **POST /**: Creates a new lost item.  
   - **Request Body**: Must include properties defined in the Item model.  
@@ -52,17 +51,16 @@ All commands are run from the FindIT directory of the project, from a terminal:
 - **GET /**: Retrieves all lost items.  
   - **Response**: Returns an array of items with a 200 status. On failure, returns a 500 error.
 
-#### Error Handling
+### Error Handling-
 
-Returns a 500 status and error message on exceptions.
+- Returns a 500 status and error message on exceptions.
 
----
 
-### Express Server
+### Express Server-
 
-Connects to MongoDB, configures middleware, and sets up routes for authentication, items, lost items, and sizes. Enables CORS and runs the server on port 3000. The `/signin` endpoint validates user credentials and returns appropriate success or error messages.
+- Connects to MongoDB, configures middleware, and sets up routes for authentication, items, lost items, and sizes. Enables CORS and runs the server on port 3000. The `/signin` endpoint validates user credentials and returns appropriate success or error messages.
 
-#### Requirements
+### Requirements-
 
 - **express**: Web framework for Node.js.
 - **connectDB**: MongoDB connection function.
@@ -72,7 +70,7 @@ Connects to MongoDB, configures middleware, and sets up routes for authenticatio
 - **sizes**: Size management routes.
 - **cors**: Cross-Origin Resource Sharing middleware.
 
-#### Usage
+### Usage-
 
 - **POST /**: Create a new item.
 - **GET /**: Fetch all items.
@@ -80,7 +78,9 @@ Connects to MongoDB, configures middleware, and sets up routes for authenticatio
 The server logs a message when started.
 
 
-**Note**: We deployed our server in Render which is a Free platform for deploying, so the it takes around fifty seconds when the server runs for the first time in a while. 
+> **⚠️ Note:**  
+> We deployed our server on Render, a free platform for deployment. Please note that it may take around ***1-2 minutes*** for the server to start when accessed for the first time after a period of inactivity.
+
 
 ## Contribution
 
@@ -106,9 +106,3 @@ Here are some of the snapshots of our app!!
 <img src="https://github.com/user-attachments/assets/8f80c8dd-02e8-485c-b780-19067ea3adf9"  width="" height="599"/><br>
 <img src="https://github.com/user-attachments/assets/455f327b-5ffc-4264-a85f-465fdf0434b0" width="" height="599"/><br>
 <img src="https://github.com/user-attachments/assets/49cad1c9-efbd-4d73-a65d-47a744f2a54f" width="" height="599"/>
-
-
-
-
-
-
