@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "3221bfd3-5a15-4b8d-bf02-ad7a9f3ccea1"
+      }
+    },
+    "android": {
+      "package": "com.akash_madugundi.findit"
+    }
+  }
+}

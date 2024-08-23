@@ -7,7 +7,7 @@ const ProfilePage = () => {
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       {
-        text: 'cancel',
+        text: 'Cancel',
         onPress: () => null,
         style: 'cancel',
       },
@@ -34,15 +34,15 @@ const ProfilePage = () => {
       </View>
 
       <View style={styles.infoContainer}>
-        <TouchableOpacity style={styles.infoItem}>
+      <TouchableOpacity style={styles.infoItem} onPress={() => router.push('../internal/editprofile')}>
           <Text style={styles.infoLabel}>Edit Profile</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.infoItem}>
+        <TouchableOpacity style={styles.infoItem} onPress={() => router.push('../internal/settings')}>
           <Text style={styles.infoLabel}>Settings</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.infoItem}>
+        <TouchableOpacity style={styles.infoItem} onPress={() => router.push('../internal/privacy')}>
           <Text style={styles.infoLabel}>Privacy</Text>
         </TouchableOpacity>
 
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#2E48A4',
-    height: width * 0.17,
+    height: width * 0.15,
     justifyContent: "center",
     // padding: 20,
     alignItems: 'center',

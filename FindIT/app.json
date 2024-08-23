@@ -6,10 +6,7 @@
     "orientation": "portrait",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "icon": "./assets/images/icon.png",
     "ios": {
       "supportsTablet": true
     },
@@ -37,7 +34,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "aab008c3-d6ec-4ebe-b5e2-0c371678520c"
+        "projectId": "f2cfd869-8e2f-4723-b6f7-8a631366b07a"
       }
     }
   }

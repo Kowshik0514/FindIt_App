@@ -8,7 +8,7 @@ import { ScrollView, StatusBar, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { MarkerProvider } from './props/MarkerContext';
+import { MarkerProvider } from '../props/MarkerContext';
 
 export default function TabLayout() {  
   return (
@@ -36,7 +36,7 @@ export default function TabLayout() {
               ),
             }}
           />
-          <Tabs.Screen
+          {/* <Tabs.Screen
             name="explore"
             options={{
               title: 'Explore',
@@ -48,7 +48,7 @@ export default function TabLayout() {
                 />
               ),
             }}
-          />
+          /> */}
           <Tabs.Screen
             name="lost"
             options={{

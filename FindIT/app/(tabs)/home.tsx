@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Dimensions, BackHandler, Alert, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
-// import MapView, { Marker, Polygon } from 'react-native-maps';
-import { useMarkers } from './props/MarkerContext';
-// import Icon from 'react-native-vector-icons/Ionicons';
+import MapView, { Marker, Polygon } from 'react-native-maps';
+import { useMarkers } from '../props/MarkerContext';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Carousel from 'react-native-reanimated-carousel';
 import { BASE_URL } from '../config';
 const { width, height } = Dimensions.get('window');
 import axios from 'axios';
+import { useRouter } from 'expo-router';
 
 const Home = () => {
   const { markers } = useMarkers();
@@ -14,6 +15,7 @@ const Home = () => {
   const [foundItems, setFoundItems] = useState(0);
   const [lostItems, setLostItems] = useState(0);
   const [foundRate, setFoundRate] = useState(0);
+  const router = useRouter();
 
   const fetchStatistics = async () => {
     try {
@@ -36,9 +38,6 @@ const Home = () => {
     }
   };
 
-useEffect(() => {
-  fetchStatistics();
-}, []);
 
   // Coordinates for IIT Tirupati
   const handleBackPress = () => {
@@ -55,12 +54,19 @@ useEffect(() => {
     ]);
     return true;
   };
-  useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-    return () => {
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-    }
-  }, []);
+
+  const handleReload=()=>{
+    router.push('/home');
+  };
+
+useEffect(() => {
+  fetchStatistics();
+  const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+  return () => {
+    backHandler.remove();
+  }
+}, []);
+
   const initialRegion = {
     latitude: 13.7149, // Center of IIT Tirupati
     longitude: 79.5920, // Center of IIT Tirupati
@@ -90,11 +96,9 @@ useEffect(() => {
           source={require('../../assets/images/searchLogo.png')} style={styles.logo}
         />
         <Text style={styles.topSectionText}>Find IT!</Text>
-        {/* <TouchableOpacity onPress={() => {
-
-          }}>
-          <Icon name="notifications" size={28} color="#ffffff" style={styles.notf}/>
-        </TouchableOpacity> */}
+        <TouchableOpacity onPress={() => {handleReload}}>
+          <Icon name="reload" size={28} color="#ffffff" style={styles.notf}/>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.carousel}>

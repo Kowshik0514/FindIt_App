@@ -42,7 +42,7 @@ export default function App() {
     }, [taglineOpacity, taglineTranslateY, router]);
 
     return (
-        <TouchableWithoutFeedback onPress={() => router.push('/choose')}>
+        // <TouchableWithoutFeedback onPress={() => router.push('/choose')}>
             
             <LinearGradient
                 colors={['#1F316F', '#3B5ED5']}
@@ -77,7 +77,7 @@ export default function App() {
                     </View>
                 </Animated.View>
             </LinearGradient>
-        </TouchableWithoutFeedback>
+        // </TouchableWithoutFeedback>
     );
 }
 

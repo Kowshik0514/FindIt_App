@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Button, TextInput, Alert, Image, TouchableOpaci
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 import MapView, { Marker, Polygon, Region } from 'react-native-maps';
-import { useMarkers } from './props/MarkerContext';
+import { useMarkers } from '../props/MarkerContext';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // or use any other icon library
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
@@ -332,7 +332,7 @@ const Lost = () => {
         </View>
       )}
 
-      {!showForm && (
+      {/* {!showForm && (
         <View style={[styles.mapContainer, { height: mapSize.height, width: mapSize.width }]}>
           <MapView
             ref={mapRef}
@@ -369,7 +369,7 @@ const Lost = () => {
             <Text style={styles.minimizeButtonText}>{mapSize.height === 300 ? '-' : '+'}</Text>
           </TouchableOpacity>
         </View>
-      )}
+      )} */}
       {!showForm ? (
         <TouchableOpacity style={styles.floatingButton} onPress={() => setShowForm(true)}>
           <Text style={styles.floatingButtonText}>+</Text>
