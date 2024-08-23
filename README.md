@@ -93,6 +93,7 @@ The server logs a message when started.
  <br>
 Here are some of the snapshots of our app!!
 <br>
+<br>
 ![Open Screen](https://github.com/user-attachments/assets/e6768c27-d746-4bbb-b49e-370f9b7b207e)
 <br>
 ![Sign In / Sign Up ](https://github.com/user-attachments/assets/a4576959-de63-4dbd-9a72-645620e70356)
