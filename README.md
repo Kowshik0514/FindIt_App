@@ -1,5 +1,11 @@
 ## Getting started
-This app is created using React Native for front-end, Node.js for back-end, MongoDB for database, ExpoGo for development, EAS for deployment 
+This app is created using React Native for front-end, Node.js for back-end, MongoDB for database, ExpoGo for development, EAS for deployment.
+
+## Demo video
+
+https://github.com/user-attachments/assets/1457f443-25f2-4256-b7da-07001fdb3351
+
+
 
 ## Description
 FindIT is a comprehensive lost and found application designed to help individuals within a community locate and return lost items. The app provides a user-friendly interface and a range of features to streamline the process of reporting and finding lost items.
